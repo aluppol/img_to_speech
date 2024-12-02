@@ -5,6 +5,13 @@ from pathlib import Path
 from typing import Optional, Set
 
 
+class UnsupportedExtensionError(ValueError):
+    pass
+
+
+class NotImplementedExtensionError(ValueError):
+    pass
+
 
 class ImgToTextConverter:
     """A class to handle text extraction from any type of img based files."""
@@ -34,7 +41,7 @@ class ImgToTextConverter:
         if not path.is_file():
             raise IsADirectoryError(f"Path is not a file: {file_path}")
         if expected_extensions and path.suffix.lower() not in expected_extensions:
-            raise ValueError(f"Unsupported file type: {file_path}. Expected extensions: {expected_extensions}")
+            raise UnsupportedExtensionError(f"Unsupported file type: {file_path}. Expected extensions: {expected_extensions}")
         return path
 
 
@@ -73,9 +80,10 @@ class ImgToTextConverter:
                     return ImgToTextConverter.__picture_to_text(path)
                 
                 case _:
-                    raise f"Provided extension is not implemented ${path.suffix.lower()}"
+                    raise NotImplementedExtensionError(f"Provided extension is not implemented '{path.suffix.lower()}'")
 
-            
+        except (UnsupportedExtensionError, NotImplementedExtensionError) as e:
+            raise ValueError(e)    
         except UnidentifiedImageError:
             raise ValueError(f"Cannot process the image: {image_path}")
         except Exception as e:
