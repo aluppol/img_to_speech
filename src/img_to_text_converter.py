@@ -59,17 +59,17 @@ class ImgToTextConverter:
             # supported extensions
             supported_extensions = set()
 
-            picture_extensions = set(Image.register_extensions())
+            picture_extensions = set(Image.registered_extensions())
             supported_extensions.update(picture_extensions)
-            supported_extensions.add('pdf')
+            supported_extensions.add('.pdf')
 
             path = ImgToTextConverter.__validate_file_path(image_path, supported_extensions)
 
             match path.suffix.lower():
-                case 'pdf':
+                case '.pdf':
                     return ImgToTextConverter.__pdf_to_text(path)
                 
-                case _ if ext in picture_extensions:
+                case _ if path.suffix.lower() in picture_extensions:
                     return ImgToTextConverter.__picture_to_text(path)
                 
                 case _:
