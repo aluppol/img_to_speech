@@ -7,5 +7,5 @@ class BookToText:
   '''
   def convert(url: str) -> str:
     raw_text = ImgToTextConverter.convert(url)
-
+    
     

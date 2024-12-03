@@ -107,18 +107,20 @@ class ImgToTextConverter:
         try:
           doc = fitz.open(path)
           text_data = []
+
           for page_num, page in enumerate(doc):
-              blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
-              for block in blocks:
-                  for line in block["lines"]:
-                      for span in line["spans"]:
-                          text_data.append({
-                              "text": span["text"],  # Actual text
-                              "size": span["size"],  # Font size
-                              "flags": span["flags"],  # Font style (e.g., bold, italic)
-                              "bbox": span["bbox"],  # Position on the page
-                              "page": page_num + 1
-                          })
+            blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
+            for block in blocks:
+              for line in block["lines"]:
+                for span in line["spans"]:
+                  text_data.append({
+                    "text": span["text"],  # Actual text
+                    "size": span["size"],  # Font size
+                    "flags": span["flags"],  # Font style (e.g., bold, italic)
+                    "bbox": span["bbox"],  # Position on the page
+                    "page": page_num + 1
+                  })
+
           return text_data
         except Exception as e:
             raise RuntimeError(f"An error occurred while processing the PDF: {str(e)}")

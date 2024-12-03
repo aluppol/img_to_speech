@@ -6,7 +6,7 @@ if __name__ == "__main__":
     try:
         result = converter.convert("test/statics/c.jpg")
         print("Extracted Text:\n", result)
-        result = converter.convert("test/statics/cl.pdf")
+        result = converter.convert("test/statics/roadto.pdf")
         print("Extracted Text:\n", result)
     except Exception as e:
         print(f"Error: {e}")
