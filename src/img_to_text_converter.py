@@ -2,7 +2,7 @@ import pytesseract
 from PIL import Image, UnidentifiedImageError
 from pathlib import Path
 from typing import Optional, Set
-import fitz  # PyMuPDF
+import pymupdf
 
 
 class UnsupportedExtensionError(ValueError):
@@ -105,12 +105,14 @@ class ImgToTextConverter:
             str: Extracted text from the PDF.
         """
         try:
-          doc = fitz.open(path)
+          doc = pymupdf.open(path)
           text_data = []
 
-          for page_num, page in enumerate(doc):
+          for page in doc:
             blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
             for block in blocks:
+              if not "lines" in block:  # ignore img and other than text types of block
+                  continue
               for line in block["lines"]:
                 for span in line["spans"]:
                   text_data.append({
@@ -118,13 +120,15 @@ class ImgToTextConverter:
                     "size": span["size"],  # Font size
                     "flags": span["flags"],  # Font style (e.g., bold, italic)
                     "bbox": span["bbox"],  # Position on the page
-                    "page": page_num + 1
+                    "page": page.number + 1
                   })
 
           return text_data
         except Exception as e:
             raise RuntimeError(f"An error occurred while processing the PDF: {str(e)}")
 
+        finally:
+            doc.close()
 
     @staticmethod
     def __picture_to_text(path: Path) -> str:
