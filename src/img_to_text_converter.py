@@ -1,7 +1,7 @@
 import pytesseract
 from PIL import Image, UnidentifiedImageError
 from pathlib import Path
-from typing import Optional, Set
+from typing import Optional, Set, TypedDict, Tuple, List
 import pymupdf
 
 
@@ -11,6 +11,14 @@ class UnsupportedExtensionError(ValueError):
 
 class NotImplementedExtensionError(ValueError):
     pass
+
+
+class FeaturedText(TypedDict):
+    text: str  # The text content (e.g., a word or phrase).
+    size: float  # The font size or relative size of the text.
+    flags: int  # Flags providing metadata (e.g., styling or annotations).
+    bbox: Tuple[float, float, float, float]  # Bounding box (x1, y1, x2, y2).
+    page: int  # Page number where the text appears.
 
 
 class ImgToTextConverter:
@@ -46,7 +54,7 @@ class ImgToTextConverter:
 
 
     @staticmethod
-    def convert(image_path: str) -> str:
+    def convert(image_path: str):
         """
         Master method to convert an image to text using Tesseract OCR.
 
@@ -91,7 +99,7 @@ class ImgToTextConverter:
 
 
     @staticmethod
-    def __pdf_to_text(path: Path) -> str:
+    def __pdf_to_text(path: Path) -> List[FeaturedText]:
         """
         Convert a PDF to text.
 
