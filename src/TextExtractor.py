@@ -21,7 +21,7 @@ class FeaturedText(TypedDict):
     page: int  # Page number where the text appears.
 
 
-class ImgToTextConverter:
+class TextExtractor:
     """A class to handle text extraction from any type of img based files."""
     
 
@@ -54,7 +54,7 @@ class ImgToTextConverter:
 
 
     @staticmethod
-    def convert(image_path: str):
+    def extract(file_path: str):
         """
         Master method to convert an image to text using Tesseract OCR.
 
@@ -78,14 +78,14 @@ class ImgToTextConverter:
             supported_extensions.update(picture_extensions)
             supported_extensions.add('.pdf')
 
-            path = ImgToTextConverter.__validate_file_path(image_path, supported_extensions)
+            path = TextExtractor.__validate_file_path(file_path, supported_extensions)
 
             match path.suffix.lower():
                 case '.pdf':
-                    return ImgToTextConverter.__pdf_to_text(path)
+                    return TextExtractor.__pdf_to_text(path)
                 
                 case _ if path.suffix.lower() in picture_extensions:
-                    return ImgToTextConverter.__picture_to_text(path)
+                    return TextExtractor.__picture_to_text(path)
                 
                 case _:
                     raise NotImplementedExtensionError(f"Provided extension is not implemented '{path.suffix.lower()}'")
@@ -93,7 +93,7 @@ class ImgToTextConverter:
         except (UnsupportedExtensionError, NotImplementedExtensionError) as e:
             raise ValueError(e)    
         except UnidentifiedImageError:
-            raise ValueError(f"Cannot process the image: {image_path}")
+            raise ValueError(f"Cannot process the image: {file_path}")
         except Exception as e:
             raise RuntimeError(f"An error occurred while processing the image: {str(e)}")
 
