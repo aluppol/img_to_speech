@@ -128,6 +128,7 @@ class TextExtractor:
                     "size": span["size"],  # Font size
                     "flags": span["flags"],  # Font style (e.g., bold, italic)
                     "bbox": span["bbox"],  # Position on the page
+                    "len": len(span["text"]),
                     "page": page.number + 1
                   })
 

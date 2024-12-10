@@ -1,4 +1,3 @@
-# from functools import singledispatch
 from transformers import BertModel, BertTokenizer
 import numpy as np
 import torch
@@ -6,8 +5,9 @@ import torch.nn as nn
 from typing import List, Tuple
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
+import json
 
-from src.TextExtractor import FeaturedText
+from TextExtractor import FeaturedText
 from LabelTransformer import LabelTransformer
 
 
@@ -54,7 +54,7 @@ class TextClassifierPipeline:
     self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
     self.scaler = MinMaxScaler()
     self.loss_fn = nn.CrossEntropyLoss()
-    pretrain_model= False
+    pretrain_model = False
 
     # Check if the model exists; otherwise, initialize a new one
     if self.model_path:
@@ -67,13 +67,16 @@ class TextClassifierPipeline:
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
 
     if pretrain_model:
-      training_dataset: List[TrainingData] = [] # load training data
-      labels_str = [row["label"] for row in training_dataset]
+      with open('statics/model_training_data/initial_training.json', 'r') as json_file:
+        training_dataset: List[TrainingData] = json.load(json_file)
+
       label_transformer = LabelTransformer()
-      labels = [label_transformer.label_to_int(label) for label in labels_str]
+
+      labels_str = [row["label"] for row in training_dataset]
+      labels = [label_transformer.to_int(label) for label in labels_str]
       text_set, feature_set = self.preprocess_input(training_dataset)
       self.__train_model(text_set, feature_set, labels)
-      self.save_model(self.model)
+      # self.save_model(self.model)
 
   
   def predict(self, text_data: List[str], numeric_features: List[List[float]]):
@@ -104,7 +107,7 @@ class TextClassifierPipeline:
     self.model.train()
     for epoch in range(epochs):
       # Tokenize text data
-      encoded_text = self.tokenizer(text_data, return_tensor='pt', padding=True, truncation=True)
+      encoded_text = self.tokenizer(text_data, return_tensors='pt', padding=True, truncation=True)
       numeric_features_tensor = torch.tensor(numeric_features, dtype=torch.float32)
       labels_tensor = torch.tensor(labels, dtype=torch.int64)
 
@@ -117,7 +120,7 @@ class TextClassifierPipeline:
       loss.backward()
       self.optimizer.step()
 
-      # print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
+      print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
 
   
 
