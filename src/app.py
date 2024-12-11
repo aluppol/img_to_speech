@@ -1,6 +1,6 @@
 from TextExtractor import TextExtractor
 from TextClassifier import TextClassifierPipeline
-from LabelTransformer import Label
+from LabelTransformer import Label, LabelTransformer
 
 import pandas as pd
 import json
@@ -15,11 +15,10 @@ def run():
       # print("Extracted Text:\n", result)
       # result = book_converter.convert("test/statics/roadto_p1-10.pdf")
 
-      model_path = "text_classifier_model.pth"
+      model_path = "src/text_classifier_model.pth"
       bert_model_name = "bert-base-uncased"
       num_numeric_features = 7 # 
-      num_classes = 8 # Header, Footer, Annotation, Chapter Title, Chapter Text, Annotation, Other, Annotation Reference
-
+      num_classes = len(Label) + 1
       pipeline = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
       
     except Exception as e:

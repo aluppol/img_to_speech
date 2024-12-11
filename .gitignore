@@ -50,3 +50,7 @@ coverage.xml
 # Your app-specific exclusions
 output_text/
 processed_images/
+
+# Ignore PyTorch model files
+*.pth
+
