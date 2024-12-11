@@ -21,7 +21,7 @@ class FeaturedText(TypedDict):
     page: int  # Page number where the text appears.
 
 
-class TextExtractor:
+class TextExtractorPipeline:
     """A class to handle text extraction from any type of img based files."""
     
 
@@ -78,14 +78,14 @@ class TextExtractor:
             supported_extensions.update(picture_extensions)
             supported_extensions.add('.pdf')
 
-            path = TextExtractor.__validate_file_path(file_path, supported_extensions)
+            path = TextExtractorPipeline.__validate_file_path(file_path, supported_extensions)
 
             match path.suffix.lower():
                 case '.pdf':
-                    return TextExtractor.__pdf_to_text(path)
+                    return TextExtractorPipeline.__pdf_to_text(path)
                 
                 case _ if path.suffix.lower() in picture_extensions:
-                    return TextExtractor.__picture_to_text(path)
+                    return TextExtractorPipeline.__picture_to_text(path)
                 
                 case _:
                     raise NotImplementedExtensionError(f"Provided extension is not implemented '{path.suffix.lower()}'")
@@ -99,7 +99,7 @@ class TextExtractor:
 
 
     @staticmethod
-    def __pdf_to_text(path: Path) -> List[FeaturedText]:
+    def __pdf_to_text(path: Path, from_page: int, to_page: int) -> List[FeaturedText]:
         """
         Convert a PDF to text.
 
@@ -114,9 +114,14 @@ class TextExtractor:
         """
         try:
           doc = pymupdf.open(path)
+          last_page_num = len(doc)
+          if not from_page:
+              from_page = 0
+          if not to_page:
+              to_page = last_page_num
           text_data = []
 
-          for page in doc:
+          for page in doc[from_page : to_page]:
             blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
             for block in blocks:
               if not "lines" in block:  # ignore img and other than text types of block
