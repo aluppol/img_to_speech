@@ -1,5 +1,6 @@
 from transformers import BertModel, BertTokenizer
 import numpy as np
+import random
 import torch
 import torch.nn as nn
 from typing import List, Tuple
@@ -94,26 +95,33 @@ class TextClassifierPipeline:
 
     return text_data, normalized_features
   
-  def train_model(self, training_dataset_path: str, epochs=5):
+  def train_model(self, training_dataset_path: str, epochs=5, training_set_iteration_size=100, randomly=False, rounds=1):
       with open(training_dataset_path, 'r') as json_file:
         training_dataset: List[TrainingData] = json.load(json_file)
-
       label_transformer = LabelTransformer()
-      training_set_iteration_size = 100
-      training_set_index = 0
-      while training_set_index < len(training_dataset):
-        labels_str = [
-          row["label"] for row in training_dataset[
-            training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+      if randomly:
+        for i in range(rounds):
+          subset = random.sample(training_dataset, training_set_iteration_size)
+          labels_str = [row["label"] for row in subset]
+          labels = [label_transformer.to_int(label) for label in labels_str]
+          text_set, feature_set = self.preprocess_input(subset)
+          self.__train_model(text_set, feature_set, labels, epochs=epochs)
+          print(f'Round #{i} ... done')
+      else:
+        training_set_index = 0
+        while training_set_index < len(training_dataset):
+          labels_str = [
+            row["label"] for row in training_dataset[
+              training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+            ]
           ]
-        ]
-        labels = [label_transformer.to_int(label) for label in labels_str]
-        text_set, feature_set = self.preprocess_input(training_dataset[
-            training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
-          ])
-        self.__train_model(text_set, feature_set, labels, epochs=epochs)
-        training_set_index += training_set_iteration_size
-        print(f'Done with row #{training_set_index}')
+          labels = [label_transformer.to_int(label) for label in labels_str]
+          text_set, feature_set = self.preprocess_input(training_dataset[
+              training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+            ])
+          self.__train_model(text_set, feature_set, labels, epochs=epochs)
+          training_set_index += training_set_iteration_size
+          print(f'Done with row #{training_set_index}')
       self.save_model()
   
   def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
