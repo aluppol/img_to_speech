@@ -54,7 +54,7 @@ class TextExtractorPipeline:
 
 
     @staticmethod
-    def extract(file_path: str):
+    def extract(file_path: str, from_page: int = None, to_page: int = None):
         """
         Master method to convert an image to text using Tesseract OCR.
 
@@ -82,7 +82,7 @@ class TextExtractorPipeline:
 
             match path.suffix.lower():
                 case '.pdf':
-                    return TextExtractorPipeline.__pdf_to_text(path)
+                    return TextExtractorPipeline.__pdf_to_text(path, from_page, to_page)
                 
                 case _ if path.suffix.lower() in picture_extensions:
                     return TextExtractorPipeline.__picture_to_text(path)
@@ -99,7 +99,7 @@ class TextExtractorPipeline:
 
 
     @staticmethod
-    def __pdf_to_text(path: Path, from_page: int, to_page: int) -> List[FeaturedText]:
+    def __pdf_to_text(path: Path, from_page: int = None, to_page: int = None) -> List[FeaturedText]:
         """
         Convert a PDF to text.
 
@@ -114,14 +114,14 @@ class TextExtractorPipeline:
         """
         try:
           doc = pymupdf.open(path)
-          last_page_num = len(doc)
+          last_page_num = len(doc) - 1
           if not from_page:
               from_page = 0
           if not to_page:
               to_page = last_page_num
           text_data = []
 
-          for page in doc[from_page : to_page]:
+          for page in doc[from_page : to_page + 1]:
             blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
             for block in blocks:
               if not "lines" in block:  # ignore img and other than text types of block

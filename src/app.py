@@ -1,9 +1,13 @@
+from typing import List
+import json
+
 from TextExtractor import TextExtractorPipeline
-from TextClassifier import TextClassifierPipeline
-from LabelTransformer import Label
+from TextClassifier import TextClassifierPipeline, TrainingData
+from LabelTransformer import Label, LabelTransformer
 
 def run():
     text_extractor = TextExtractorPipeline()
+    label_transformer = LabelTransformer()
 
     model_path = "src/text_classifier_model.pth"
     bert_model_name = "bert-base-uncased"
@@ -12,10 +16,34 @@ def run():
     text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
 
     try:
-      pass # file processing logic
+      # from_page, to_page = (10, 11)
+      # for i in range(from_page, to_page):
+      #   featured_text = text_extractor.extract('statics/roadto.pdf', i, i)
+      #   text, num_features = text_classifier.preprocess_input(featured_text)
+      #   labels = text_classifier.predict(text, num_features)
+      #   for i in range(len(labels)):
+      #      featured_text[i]["label"] = labels[i]
+
+      text_classifier.train_model('statics/model_training_data/12102024_01.json', epochs=25)
+           
+           
     except Exception as e:
         print(f"Error: {e}")
+
+def safe_training_data(data: List[TrainingData], file_path: str):
+  save_to_json(data, file_path)
+  
+def save_to_json(data, path: str):
+  """
+  Save the given data to a JSON file at the specified path.
+
+  :param data: The data to be saved (must be serializable to JSON).
+  :param path: The file path where the JSON will be saved.
+  """
+  with open(path, 'w', encoding='utf-8') as file:
+    json.dump(data, file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
   run()
+

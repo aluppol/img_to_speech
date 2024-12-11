@@ -67,32 +67,13 @@ class TextClassifierPipeline:
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
 
     if pretrain_model:
-      with open('statics/model_training_data/initial_training.json', 'r') as json_file:
-        training_dataset: List[TrainingData] = json.load(json_file)
-
-      label_transformer = LabelTransformer()
-      training_set_iteration_size = 100
-      training_set_index = 0
-      while training_set_index < len(training_dataset):
-        labels_str = [
-          row["label"] for row in training_dataset[
-            training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
-          ]
-        ]
-        labels = [label_transformer.to_int(label) for label in labels_str]
-        text_set, feature_set = self.preprocess_input(training_dataset[
-            training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
-          ])
-        self.__train_model(text_set, feature_set, labels)
-        training_set_index += training_set_iteration_size
-        # print(f'Done with row #{training_set_index})
-      self.save_model()
+      self.train_model('statics/model_training_data/initial_training.json')
 
   
   def predict(self, text_data: List[str], numeric_features: List[List[float]]):
     self.model.eval()
     with torch.no_grad():
-      encoded_text = self.tokenizer(text_data, return_tensor='pt', padding=True, truncation=True)
+      encoded_text = self.tokenizer(text_data, return_tensors='pt', padding=True, truncation=True)
       numeric_features_tensor = torch.tensor(numeric_features, dtype=torch.float32)
       prediction = self.model(encoded_text, numeric_features_tensor)
       return torch.argmax(prediction, dim=1).tolist()
@@ -113,6 +94,28 @@ class TextClassifierPipeline:
 
     return text_data, normalized_features
   
+  def train_model(self, training_dataset_path: str, epochs=5):
+      with open(training_dataset_path, 'r') as json_file:
+        training_dataset: List[TrainingData] = json.load(json_file)
+
+      label_transformer = LabelTransformer()
+      training_set_iteration_size = 100
+      training_set_index = 0
+      while training_set_index < len(training_dataset):
+        labels_str = [
+          row["label"] for row in training_dataset[
+            training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+          ]
+        ]
+        labels = [label_transformer.to_int(label) for label in labels_str]
+        text_set, feature_set = self.preprocess_input(training_dataset[
+            training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+          ])
+        self.__train_model(text_set, feature_set, labels, epochs=epochs)
+        training_set_index += training_set_iteration_size
+        print(f'Done with row #{training_set_index}')
+      self.save_model()
+  
   def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
     self.model.train()
     for epoch in range(epochs):
@@ -130,4 +133,4 @@ class TextClassifierPipeline:
       loss.backward()
       self.optimizer.step()
 
-      # print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
+      print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
