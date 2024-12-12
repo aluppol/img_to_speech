@@ -11,7 +11,7 @@ class Label(Enum):
     OTHER = auto()
     ANNOTATION_REFERENCE = auto()
     EPIGRAPH = auto()
-    EPIGRAPH_AUTHOR = auto()
+    AUTHOR = auto()
 
 class LabelTransformer:
     def __init__(self):

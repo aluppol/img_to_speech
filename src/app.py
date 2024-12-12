@@ -16,7 +16,7 @@ def run():
     text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
 
     try:
-      from_page, to_page = (20, 21)
+      from_page, to_page = (135, 135)
       for i in range(from_page, to_page):
         featured_text = text_extractor.extract('statics/roadto.pdf', i, i)
         text, num_features = text_classifier.preprocess_input(featured_text)
@@ -39,7 +39,7 @@ def generate_training_data(path: str):
   num_classes = len(Label) + 1
   text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
     
-  from_page, to_page = (20, 21)
+  from_page, to_page = (102, 102)
   featured_text = text_extractor.extract('statics/roadto.pdf', from_page, to_page)
   text, num_features = text_classifier.preprocess_input(featured_text)
   labels = text_classifier.predict(text, num_features)
@@ -48,14 +48,14 @@ def generate_training_data(path: str):
 
   safe_training_data(featured_text, path)
 
-def train_model(path: str):
+def train_model(path: str, rounds: int=1):
   model_path = "src/text_classifier_model.pth"
   bert_model_name = "bert-base-uncased"
   num_numeric_features = 7 # 
   num_classes = len(Label) + 1
   text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
     
-  text_classifier.train_model(path, epochs=1, training_set_iteration_size=1000)
+  text_classifier.train_model(path, epochs=1, training_set_iteration_size=1000, rounds=rounds)
 
 def safe_training_data(data: List[TrainingData], file_path: str):
   save_to_json(data, file_path)
@@ -73,6 +73,6 @@ def save_to_json(data, path: str):
 
 if __name__ == "__main__":
   # run()
-  # generate_training_data('statics/model_training_data/12112024_02.json')
-  train_model('statics/model_training_data/12112024_02.json')
+  generate_training_data('statics/model_training_data/roadto/15-ch7.json')
+  # train_model('statics/model_training_data/12112024_01.json', rounds=1)
 

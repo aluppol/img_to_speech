@@ -106,22 +106,24 @@ class TextClassifierPipeline:
           labels = [label_transformer.to_int(label) for label in labels_str]
           text_set, feature_set = self.preprocess_input(subset)
           self.__train_model(text_set, feature_set, labels, epochs=epochs)
-          print(f'Round #{i} ... done')
+          print(f'Round #{i + 1}/{rounds}  ... done')
       else:
-        training_set_index = 0
-        while training_set_index < len(training_dataset):
-          labels_str = [
-            row["label"] for row in training_dataset[
-              training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+        for i in range(rounds):
+          training_set_index = 0
+          while training_set_index < len(training_dataset):
+            labels_str = [
+              row["label"] for row in training_dataset[
+                training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+              ]
             ]
-          ]
-          labels = [label_transformer.to_int(label) for label in labels_str]
-          text_set, feature_set = self.preprocess_input(training_dataset[
-              training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
-            ])
-          self.__train_model(text_set, feature_set, labels, epochs=epochs)
-          training_set_index += training_set_iteration_size
-          print(f'Done with row #{training_set_index}')
+            labels = [label_transformer.to_int(label) for label in labels_str]
+            text_set, feature_set = self.preprocess_input(training_dataset[
+                training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
+              ])
+            self.__train_model(text_set, feature_set, labels, epochs=epochs)
+            training_set_index += training_set_iteration_size
+            print(f'Done with row #{training_set_index}')
+          print(f'Round #{i + 1}/{rounds}  ... done')
       self.save_model()
   
   def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
