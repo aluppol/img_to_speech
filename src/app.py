@@ -55,7 +55,7 @@ def train_model(path: str):
   num_classes = len(Label) + 1
   text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
     
-  text_classifier.train_model(path, epochs=25, training_set_iteration_size=1000)
+  text_classifier.train_model(path, epochs=1, training_set_iteration_size=1000)
 
 def safe_training_data(data: List[TrainingData], file_path: str):
   save_to_json(data, file_path)
