@@ -48,14 +48,14 @@ def generate_training_data(path: str):
 
   safe_training_data(featured_text, path)
 
-def train_model(path: str, rounds: int=1):
+def train_model(path: str, epochs=5, loss_limit=0.5):
   model_path = "src/text_classifier_model.pth"
   bert_model_name = "bert-base-uncased"
   num_numeric_features = 7 # 
   num_classes = len(Label) + 1
   text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
     
-  text_classifier.train_model(path, epochs=1, training_set_iteration_size=1000, rounds=rounds)
+  text_classifier.train_model(path, epochs=epochs, loss_limit=loss_limit)
 
 def safe_training_data(data: List[TrainingData], file_path: str):
   save_to_json(data, file_path)
@@ -73,6 +73,6 @@ def save_to_json(data, path: str):
 
 if __name__ == "__main__":
   # run()
-  generate_training_data('statics/model_training_data/roadto/15-ch7.json')
-  # train_model('statics/model_training_data/12112024_01.json', rounds=1)
+  # generate_training_data('statics/model_training_data/roadto/change_name.json')
+  train_model('statics/model_training_data/roadto', loss_limit=0.2)
 

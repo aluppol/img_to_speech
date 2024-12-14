@@ -1,6 +1,6 @@
 from transformers import BertModel, BertTokenizer
+import heapq
 import numpy as np
-import random
 import torch
 import torch.nn as nn
 from typing import List, Tuple
@@ -68,7 +68,7 @@ class TextClassifierPipeline:
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
 
     if pretrain_model:
-      self.train_model('statics/model_training_data/initial_training.json')
+      self.train_model('statics/model_training_data/roadto')
 
   
   def predict(self, text_data: List[str], numeric_features: List[List[float]]):
@@ -95,35 +95,25 @@ class TextClassifierPipeline:
 
     return text_data, normalized_features
   
-  def train_model(self, training_dataset_path: str, epochs=5, training_set_iteration_size=100, randomly=False, rounds=1):
-      with open(training_dataset_path, 'r') as json_file:
-        training_dataset: List[TrainingData] = json.load(json_file)
+  def train_model(self, training_dataset_path: str, epochs=5, loss_limit=0.5):
+      training_file_paths = ([training_dataset_path]
+        if Path(training_dataset_path).is_file()
+        else [str(file) for file in Path(training_dataset_path).iterdir() if file.is_file() and file.suffix == '.json'])
       label_transformer = LabelTransformer()
-      if randomly:
-        for i in range(rounds):
-          subset = random.sample(training_dataset, training_set_iteration_size)
-          labels_str = [row["label"] for row in subset]
-          labels = [label_transformer.to_int(label) for label in labels_str]
-          text_set, feature_set = self.preprocess_input(subset)
-          self.__train_model(text_set, feature_set, labels, epochs=epochs)
-          print(f'Round #{i + 1}/{rounds}  ... done')
-      else:
-        for i in range(rounds):
-          training_set_index = 0
-          while training_set_index < len(training_dataset):
-            labels_str = [
-              row["label"] for row in training_dataset[
-                training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
-              ]
-            ]
-            labels = [label_transformer.to_int(label) for label in labels_str]
-            text_set, feature_set = self.preprocess_input(training_dataset[
-                training_set_index : training_set_index + training_set_iteration_size if len(training_dataset) - training_set_index > training_set_iteration_size else len(training_dataset)
-              ])
-            self.__train_model(text_set, feature_set, labels, epochs=epochs)
-            training_set_index += training_set_iteration_size
-            print(f'Done with row #{training_set_index}')
-          print(f'Round #{i + 1}/{rounds}  ... done')
+      training_queue = [(-100, path) for path in sorted(training_file_paths)]
+      while len(training_queue) > 0:
+        last_loss, dataset_path = heapq.heappop(training_queue)
+        last_loss = -last_loss  # invert the sign from min heap to return to normal form
+        print(f'Dataset f{dataset_path} ... processing')
+        with open(dataset_path, 'r') as json_file:
+          training_dataset: List[TrainingData] = json.load(json_file)
+        labels_str = [row["label"] for row in training_dataset]
+        labels = [label_transformer.to_int(label) for label in labels_str]
+        text_set, feature_set = self.preprocess_input(training_dataset)
+        loss = self.__train_model(text_set, feature_set, labels, epochs=epochs)
+        print(f'Dataset f{dataset_path} ... done ... from {last_loss} to {loss}')
+        if loss > loss_limit:
+          heapq.heappush(training_queue, (-loss, dataset_path)) # invert sign to make min heap
       self.save_model()
   
   def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
@@ -144,3 +134,4 @@ class TextClassifierPipeline:
       self.optimizer.step()
 
       print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
+    return loss.item()
