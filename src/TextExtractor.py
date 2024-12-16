@@ -1,7 +1,7 @@
 import pytesseract
 from PIL import Image, UnidentifiedImageError
 from pathlib import Path
-from typing import Optional, Set, TypedDict, Tuple, List
+from typing import Optional, Set, TypedDict, Tuple, List, Generator
 import pymupdf
 
 
@@ -21,7 +21,7 @@ class FeaturedText(TypedDict):
     page: int  # Page number where the text appears.
 
 
-class TextExtractorPipeline:
+class TextExtractor:
     """A class to handle text extraction from any type of img based files."""
     
 
@@ -78,14 +78,14 @@ class TextExtractorPipeline:
             supported_extensions.update(picture_extensions)
             supported_extensions.add('.pdf')
 
-            path = TextExtractorPipeline.__validate_file_path(file_path, supported_extensions)
+            path = TextExtractor.__validate_file_path(file_path, supported_extensions)
 
             match path.suffix.lower():
                 case '.pdf':
-                    return TextExtractorPipeline.__pdf_to_text(path, from_page, to_page)
+                    return TextExtractor.__pdf_to_text(path, from_page, to_page)
                 
                 case _ if path.suffix.lower() in picture_extensions:
-                    return TextExtractorPipeline.__picture_to_text(path)
+                    return TextExtractor.__picture_to_text(path)
                 
                 case _:
                     raise NotImplementedExtensionError(f"Provided extension is not implemented '{path.suffix.lower()}'")
@@ -99,18 +99,17 @@ class TextExtractorPipeline:
 
 
     @staticmethod
-    def __pdf_to_text(path: Path, from_page: int = None, to_page: int = None) -> List[FeaturedText]:
+    def __pdf_to_text(path: Path, from_page: int = None, to_page: int = None) -> Generator[List[FeaturedText]]:
         """
-        Convert a PDF to text.
+            Extracts text from each page of a PDF one by one in a memory-efficient manner.
+            This function is a generator that yields the text of each page, making it suitable for large PDFs that cannot be loaded entirely into memory.
+            
+            Args:
+                pdf_path (str): Path to the PDF file to be processed.
+                from_page (int, def: 0): Page number to start extraction.
+                to_page (int, def: last page): Last page to extract text from.
 
-        Args:
-            pdf_path (str): Path to the PDF file.
-
-        Raises:
-            RuntimeError: If an error occurs during processing.
-
-        Returns:
-            str: Extracted text from the PDF.
+            Yields: List[FeaturedText]: The featured text of each page in the PDF.
         """
         try:
           doc = pymupdf.open(path)
@@ -119,16 +118,16 @@ class TextExtractorPipeline:
               from_page = 0
           if not to_page:
               to_page = last_page_num
-          text_data = []
 
           for page in doc[from_page : to_page + 1]:
+            extracted_featured_text = []
             blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
             for block in blocks:
               if not "lines" in block:  # ignore img and other than text types of block
                   continue
               for line in block["lines"]:
                 for span in line["spans"]:
-                  text_data.append({
+                  extracted_featured_text.append({
                     "text": span["text"],  # Actual text
                     "size": span["size"],  # Font size
                     "flags": span["flags"],  # Font style (e.g., bold, italic)
@@ -136,8 +135,7 @@ class TextExtractorPipeline:
                     "len": len(span["text"]),
                     "page": page.number + 1
                   })
-
-          return text_data
+            yield extracted_featured_text
         except Exception as e:
             raise RuntimeError(f"An error occurred while processing the PDF: {str(e)}")
 

@@ -15,12 +15,13 @@ from LabelTransformer import LabelTransformer
 class TrainingData(FeaturedText):
   label: str
 
+class ClassifiedText:
+  label: int
+  text: str
 
-class Chapter:
-  def __init__(self, title: str, text: str, annotation: str):
-    self.title = title
+  def __init__(self, label: int, text: str):
+    self.label = label
     self.text = text
-    self.annotation = annotation
 
 
 class TextClassifierModel(nn.Module):
@@ -49,7 +50,7 @@ class TextClassifierModel(nn.Module):
     return self.output_layer(combined)
 
 
-class TextClassifierPipeline:
+class TextClassifier:
   def __init__(self, model_path: str, bert_model_name: str, num_numeric_features: int, num_classes: int):
     self.model_path = Path(model_path) if Path(model_path).exists() else None
     self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
@@ -135,3 +136,14 @@ class TextClassifierPipeline:
 
       print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
     return loss.item()
+
+  def classify_featured_text(self, featured_text: List[FeaturedText]) -> List[ClassifiedText]:
+    text, numeric_features = self.preprocess_input(featured_text)
+    labels = self.predict(text, numeric_features)
+    
+    result: List[ClassifiedText] = []
+
+    for i in range(len(text)):
+      result.append(ClassifiedText(label=labels[i], text=text[i]))
+
+    return result

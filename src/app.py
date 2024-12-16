@@ -1,43 +1,21 @@
 from typing import List
 import json
 
-from TextExtractor import TextExtractorPipeline
-from TextClassifier import TextClassifierPipeline, TrainingData
+from TextExtractor import TextExtractor
+from TextClassifier import TextClassifier, TrainingData
 from LabelTransformer import Label, LabelTransformer
-
-def run():
-    text_extractor = TextExtractorPipeline()
-    label_transformer = LabelTransformer()
-
-    model_path = "src/text_classifier_model.pth"
-    bert_model_name = "bert-base-uncased"
-    num_numeric_features = 7 # 
-    num_classes = len(Label) + 1
-    text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
-
-    try:
-      from_page, to_page = (135, 135)
-      for i in range(from_page, to_page):
-        featured_text = text_extractor.extract('statics/roadto.pdf', i, i)
-        text, num_features = text_classifier.preprocess_input(featured_text)
-        labels = text_classifier.predict(text, num_features)
-        for i in range(len(labels)):
-          print(text[i], label_transformer.to_str(labels[i]))
-           
-           
-    except Exception as e:
-        print(f"Error: {e}")
+from TextAssembler import TextAssembler
 
 
 def generate_training_data(path: str):
-  text_extractor = TextExtractorPipeline()
+  text_extractor = TextExtractor()
   label_transformer = LabelTransformer()
 
   model_path = "src/text_classifier_model.pth"
   bert_model_name = "bert-base-uncased"
   num_numeric_features = 7 # 
   num_classes = len(Label) + 1
-  text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
+  text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
     
   from_page, to_page = (102, 102)
   featured_text = text_extractor.extract('statics/roadto.pdf', from_page, to_page)
@@ -53,7 +31,7 @@ def train_model(path: str, epochs=5, loss_limit=0.5):
   bert_model_name = "bert-base-uncased"
   num_numeric_features = 7 # 
   num_classes = len(Label) + 1
-  text_classifier = TextClassifierPipeline(model_path, bert_model_name, num_numeric_features, num_classes)
+  text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
     
   text_classifier.train_model(path, epochs=epochs, loss_limit=loss_limit)
 
@@ -74,5 +52,27 @@ def save_to_json(data, path: str):
 if __name__ == "__main__":
   # run()
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
-  train_model('statics/model_training_data/roadto', loss_limit=0.2)
+  train_model('statics/model_training_data/roadto', loss_limit=0.1)
 
+
+def pdf_to_voice_pipeline(pdf_file_path: str, mp3_foler_path: str):
+  text_extractor = TextExtractor()
+  label_transformer = LabelTransformer()
+  text_assembler = TextAssembler()
+
+  model_path = "src/text_classifier_model.pth"
+  bert_model_name = "bert-base-uncased"
+  num_numeric_features = 7 # of features for one data chunk to classify
+  num_classes = len(Label) + 1
+  text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
+
+  try:
+    for featured_text_page in text_extractor.extract(pdf_file_path):
+      classified_text_page = text_classifier.classify_featured_text(featured_text_page)
+      for chapter in text_assembler.process_classified_text(classified_text_page):
+          print(chapter.title)
+          print(chapter.text)
+          print(chapter.annotation)
+          
+  except Exception as e:
+      print(f"Error: {e}")
