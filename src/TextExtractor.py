@@ -99,7 +99,7 @@ class TextExtractor:
 
 
     @staticmethod
-    def __pdf_to_text(path: Path, from_page: int = None, to_page: int = None) -> Generator[List[FeaturedText]]:
+    def __pdf_to_text(path: Path, from_page: int = None, to_page: int = None) -> Generator[List[FeaturedText], None, None]:
         """
             Extracts text from each page of a PDF one by one in a memory-efficient manner.
             This function is a generator that yields the text of each page, making it suitable for large PDFs that cannot be loaded entirely into memory.

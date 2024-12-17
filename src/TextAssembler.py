@@ -1,4 +1,5 @@
 from typing import List, Generator
+import re
 
 from TextClassifier import ClassifiedText
 from LabelTransformer import Label
@@ -22,21 +23,29 @@ class Sentense:
         self.text = text
         self.annotation = annotation
 
+class Annotation:
+    def __init__(
+        self,
+        text: str = '',
+        reference: str = None,
+    ):
+        self.text = text
+        self.reference = reference
+
 class TextAssembler:
     def __init__(self):
         self.title = None
         self.chapter_title = None
-        self.sentenses: List[Sentense] = []
-        self.sentense = ''
-        self.annotations = []
-        self.annotation_references = []
-        self.epigraphs = []
-        self.authors = []
+        self.sentenses: List[Sentense] = [Sentense()]
+        self.annotations: List[Annotation] = []
+        self.annotation_references = ['']
+        self.epigraphs = ['']
+        self.authors = ['']
         self.last_chunk_label: int = None
         self.classification_mistakes = []
         self.chapter=None
 
-    def process_classified_text(self, classified_text: List[ClassifiedText]) -> Generator[Chapter]:
+    def process_classified_text(self, classified_text: List[ClassifiedText]) -> Generator[Chapter, None, None]:
         for chunk in classified_text:
             match chunk.label:
                 case Label.TITLE:
@@ -94,10 +103,11 @@ class TextAssembler:
         for sentense in self.sentenses:
             chapter_text += ' ' + sentense.text
             if sentense.annotation:
-                for i in range(len(self.annotation_references)):
-                    if sentense.annotation == self.annotation_references[i]:
-                        chapter_text += ' ' + self.annotations[i]
-                        break
+                annotation = next((ann for ann in self.annotations if ann.reference == sentense.annotation), None)
+                if annotation:
+                    chapter_text += ' ' + annotation.text
+                else:
+                    raise Exception(f'No reference for "{sentense.annotation}" annotation found!')
                         
         self.chapter = Chapter(self.chapter_title, chapter_text)
 
@@ -110,4 +120,37 @@ class TextAssembler:
         self.last_chunk_label = None
 
     def __process_chapter_text(self, text: str):
-        pass
+        end_of_sentense_match = re.match(r"(.*?[.!?]\s*)(.*)", text, re.DOTALL)
+        while not end_of_sentense_match:
+            self.sentenses[len(self.sentenses) - 1].text += end_of_sentense_match.group(1)
+            self.sentenses.append(Sentense())
+            text = end_of_sentense_match.group(2)
+            end_of_sentense_match = re.match(r"(.*?[.!?]\s*)(.*)", text, re.DOTALL)
+
+        self.sentenses[len(self.sentenses) - 1].text += text
+        self.last_chunk_label = Label.CHAPTER_TEXT
+
+    def __process_annotation(self, text: str):
+        if self.last_chunk_label == Label.ANNOTATION_REFERENCE:
+            self.annotations.append(Annotation(text, self.annotation_references[len(self.annotation_references) - 1]))
+            self.annotation_references.append('')
+        else:
+            self.annotations[len(self.annotations) - 1].text += text
+
+    def __process_annotation_reference(self, text: str):
+        if self.last_chunk_label == Label.ANNOTATION_REFERENCE:
+            self.annotation_references[len(self.annotation_references) - 1] += re.sub(r"[^a-zA-Z0-9]", "", text)
+        else:
+            self.annotation_references.append(re.sub(r"[^a-zA-Z0-9]", "", text))
+
+    def __process_epigraph(self, text: str):
+        if self.last_chunk_label == Label.EPIGRAPH:
+            self.epigraphs[len(self.epigraphs) - 1] += text
+        else:
+            self.epigraphs.append(text)
+
+    def __process_author(self, text: str):
+        if self.last_chunk_label == Label.AUTHOR:
+            self.authors[len(self.authors) - 1] += text
+        else:
+            self.authors.append(text)
