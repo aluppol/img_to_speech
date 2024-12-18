@@ -50,14 +50,13 @@ def save_to_json(data, path: str):
 
 
 if __name__ == "__main__":
-  # run()
+  # pdf_to_voice_pipeline('statics/roadto.pdf')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
   train_model('statics/model_training_data/roadto', loss_limit=0.1)
 
 
-def pdf_to_voice_pipeline(pdf_file_path: str, mp3_foler_path: str):
+def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
   text_extractor = TextExtractor()
-  label_transformer = LabelTransformer()
   text_assembler = TextAssembler()
 
   model_path = "src/text_classifier_model.pth"
@@ -67,12 +66,15 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_foler_path: str):
   text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
 
   try:
-    for featured_text_page in text_extractor.extract(pdf_file_path):
+    for featured_text_page in text_extractor.extract(pdf_file_path, 41, 43):
       classified_text_page = text_classifier.classify_featured_text(featured_text_page)
+      chapters = []
       for chapter in text_assembler.process_classified_text(classified_text_page):
-          print(chapter.title)
-          print(chapter.text)
-          print(chapter.annotation)
+          chapters.append(chapter)
+      text_assembler.__save_chapter()
+      chapter = text_assembler.chapter
+      print(chapter.title)
+      print(chapter.text)
           
   except Exception as e:
       print(f"Error: {e}")
