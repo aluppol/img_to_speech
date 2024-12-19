@@ -11,7 +11,7 @@
       ],
       "len": 1,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": "ECONOM",
@@ -25,7 +25,7 @@
       ],
       "len": 6,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": " IC",
@@ -39,7 +39,7 @@
       ],
       "len": 3,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": " CONTROL",
@@ -53,7 +53,7 @@
       ],
       "len": 8,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": " AN",
@@ -67,7 +67,7 @@
       ],
       "len": 3,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": " D",
@@ -81,7 +81,7 @@
       ],
       "len": 2,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": "TOTALITARIAN",
@@ -95,7 +95,7 @@
       ],
       "len": 12,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": " ISM",
@@ -109,7 +109,7 @@
       ],
       "len": 4,
       "page": 99,
-      "label": "TITLE"
+      "label": "CHAPTER_TITLE"
   },
   {
       "text": "The control",

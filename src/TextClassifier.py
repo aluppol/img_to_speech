@@ -8,8 +8,8 @@ from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from TextExtractor import FeaturedText
-from LabelTransformer import LabelTransformer
+from src.TextExtractor import FeaturedText
+from src.LabelTransformer import LabelTransformer
 
 
 class TrainingData(FeaturedText):

@@ -71,7 +71,7 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
       chapters = []
       for chapter in text_assembler.process_classified_text(classified_text_page):
           chapters.append(chapter)
-      text_assembler.__save_chapter()
+      text_assembler.save_chapter()
       chapter = text_assembler.chapter
       print(chapter.title)
       print(chapter.text)
