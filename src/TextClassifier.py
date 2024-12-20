@@ -52,13 +52,14 @@ class TextClassifierModel(PreTrainedModel):
 
 class TextClassifier:
   def __init__(self, model_dir: str, bert_model_name: str, num_numeric_features: int, num_classes: int):
-    self.model_dir = Path(model_dir) if Path(model_dir).exists() and any(Path(model_dir).iterdir()) else None
+    self.model_dir = Path(model_dir)
+    is_create_model = False if self.model_dir.exists() and any(self.model_dir.iterdir()) else True
     self.scaler = MinMaxScaler()
     self.loss_fn = nn.CrossEntropyLoss()
     pretrain_model = False
 
     # Check if the model exists; otherwise, initialize a new one
-    if self.model_dir:
+    if is_create_model:
       print(f"Loading model from {model_dir}...")
       self.tokenizer = BertTokenizer.from_pretrained(self.model_dir)
       self.model = TextClassifierModel.from_pretrained(self.model_dir)
@@ -152,7 +153,8 @@ class TextClassifier:
         print(f'Dataset f{dataset_path} ... done ... from {last_loss} to {loss}')
         if loss > loss_limit:
           heapq.heappush(training_queue, (-loss, dataset_path)) # invert sign to make min heap
-      self.save_model()
+
+      print('Training ... completed')
   
   def classify_featured_text(self, featured_text: List[FeaturedText]) -> List[ClassifiedText]:
     text, numeric_features = self.preprocess_input(featured_text)

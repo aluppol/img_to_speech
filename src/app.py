@@ -26,14 +26,16 @@ def generate_training_data(path: str):
 
   safe_training_data(featured_text, path)
 
-def train_model(path: str, epochs=5, loss_limit=0.5):
-  model_path = "src/models/text_classifier_model"
+def train_model(training_data_dir: str, model_dir: str, epochs=5, loss_limit=0.5):
   bert_model_name = "bert-base-uncased"
-  num_numeric_features = 7 # 
+  num_numeric_features = 7 # just counted myself
   num_classes = len(Label) + 1
-  text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
+  text_classifier = TextClassifier(model_dir, bert_model_name, num_numeric_features, num_classes)
     
-  text_classifier.train_model(path, epochs=epochs, loss_limit=loss_limit)
+  text_classifier.train_model(training_data_dir, epochs=epochs, loss_limit=loss_limit)
+  if not text_classifier.model_dir.exists():
+    text_classifier.model_dir.mkdir()
+  text_classifier.save_model(text_classifier.model_dir)
 
 def safe_training_data(data: List[TrainingData], file_path: str):
   save_to_json(data, file_path)
@@ -52,7 +54,7 @@ def save_to_json(data, path: str):
 if __name__ == "__main__":
   # pdf_to_voice_pipeline('statics/roadto.pdf')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
-  train_model('statics/model_training_data/roadto', loss_limit=0.1)
+  train_model('statics/model_training_data/roadto', 'src/models/text_classifier_model', loss_limit=0.5)
 
 
 def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
