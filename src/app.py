@@ -1,5 +1,6 @@
 from typing import List
 import json
+from pathlib import Path
 
 from TextExtractor import TextExtractor
 from TextClassifier import TextClassifier, TrainingData
@@ -11,8 +12,8 @@ def generate_training_data(path: str):
   text_extractor = TextExtractor()
   label_transformer = LabelTransformer()
 
-  model_path = "src/text_classifier_model.pth"
-  bert_model_name = "bert-base-uncased"
+  model_path = 'src/text_classifier_model.pth'
+  bert_model_name = 'bert-base-uncased'
   num_numeric_features = 7 # 
   num_classes = len(Label) + 1
   text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
@@ -22,15 +23,12 @@ def generate_training_data(path: str):
   text, num_features = text_classifier.preprocess_input(featured_text)
   labels = text_classifier.predict(text, num_features)
   for i in range(len(labels)):
-    featured_text[i]["label"] = str(label_transformer.to_str(labels[i])).split('.')[1]
+    featured_text[i]['label'] = str(label_transformer.to_str(labels[i])).split('.')[1]
 
   safe_training_data(featured_text, path)
 
-def train_model(training_data_dir: str, model_dir: str, epochs=5, loss_limit=0.5):
-  bert_model_name = "bert-base-uncased"
-  num_numeric_features = 7 # just counted myself
-  num_classes = len(Label) + 1
-  text_classifier = TextClassifier(model_dir, bert_model_name, num_numeric_features, num_classes)
+def train_text_classifier(training_data_dir: str, model_dir: str, epochs=5, loss_limit=0.5):
+  text_classifier = TextClassifier(model_dir)
     
   text_classifier.train_model(training_data_dir, epochs=epochs, loss_limit=loss_limit)
   if not text_classifier.model_dir.exists():
@@ -41,31 +39,30 @@ def safe_training_data(data: List[TrainingData], file_path: str):
   save_to_json(data, file_path)
   
 def save_to_json(data, path: str):
-  """
+  '''
   Save the given data to a JSON file at the specified path.
 
   :param data: The data to be saved (must be serializable to JSON).
   :param path: The file path where the JSON will be saved.
-  """
+  '''
   with open(path, 'w', encoding='utf-8') as file:
     json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   # pdf_to_voice_pipeline('statics/roadto.pdf')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
-  train_model('statics/model_training_data/roadto', 'src/models/text_classifier_model', loss_limit=0.5)
+  train_text_classifier('statics/model_training_data/roadto', 'src/models/book_text_classifier_model')
 
 
 def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
   text_extractor = TextExtractor()
   text_assembler = TextAssembler()
 
-  model_path = "src/text_classifier_model.pth"
-  bert_model_name = "bert-base-uncased"
-  num_numeric_features = 7 # of features for one data chunk to classify
-  num_classes = len(Label) + 1
-  text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
+  model_path = Path('src/models/book_text_classifier_model')
+  if not model_path.exists() or not any(model_path.iterdir()):
+    model_path = 'aluppol/img_to_speech-book_text_classifier'
+  text_classifier = TextClassifier(model_path)
 
   try:
     for featured_text_page in text_extractor.extract(pdf_file_path, 41, 43):
@@ -79,4 +76,4 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
       print(chapter.text)
           
   except Exception as e:
-      print(f"Error: {e}")
+      print(f'Error: {e}')

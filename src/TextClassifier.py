@@ -8,8 +8,9 @@ from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from src.TextExtractor import FeaturedText
-from src.LabelTransformer import LabelTransformer
+from TextExtractor import FeaturedText
+from LabelTransformer import LabelTransformer
+from LabelTransformer import Label
 
 
 class TrainingData(FeaturedText):
@@ -51,7 +52,12 @@ class TextClassifierModel(PreTrainedModel):
 
 
 class TextClassifier:
-  def __init__(self, model_dir: str, bert_model_name: str, num_numeric_features: int, num_classes: int):
+  def __init__(
+      self,
+      model_dir: str,
+      bert_model_name: str = "bert-base-uncased",
+      num_numeric_features: int = 7,
+      num_classes: int = len(Label) + 1):
     self.model_dir = Path(model_dir)
     is_create_model = False if self.model_dir.exists() and any(self.model_dir.iterdir()) else True
     self.scaler = MinMaxScaler()
@@ -61,17 +67,10 @@ class TextClassifier:
     # Check if the model exists; otherwise, initialize a new one
     if is_create_model:
       print(f"Loading model from {model_dir}...")
-      self.tokenizer = BertTokenizer.from_pretrained(self.model_dir)
-      self.model = TextClassifierModel.from_pretrained(self.model_dir)
+      self.__load_model(model_dir)
     else:
       print(f"No pre-trained model found at {model_dir}. Initializing a new model...")
-      self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
-      self.model = TextClassifierModel(
-        config=PretrainedConfig(),
-        bert_model_name=bert_model_name,
-        num_numeric_features=num_numeric_features,
-        num_classes=num_classes,
-      )
+      self.__create_model(bert_model_name, num_numeric_features, num_classes)
       pretrain_model = True
 
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
@@ -187,3 +186,16 @@ class TextClassifier:
 
       print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
     return loss.item()
+
+  def __load_model(self, model_dir: str):
+    self.tokenizer = BertTokenizer.from_pretrained(model_dir)
+    self.model = TextClassifierModel.from_pretrained(model_dir)
+
+  def __create_model(self, bert_model_name: str, num_numeric_features: int, num_classes: int):
+    self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
+    self.model = TextClassifierModel(
+      config=PretrainedConfig(),
+      bert_model_name=bert_model_name,
+      num_numeric_features=num_numeric_features,
+      num_classes=num_classes,
+    )

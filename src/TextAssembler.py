@@ -1,8 +1,8 @@
 from typing import List, Generator
 import re
 
-from src.TextClassifier import ClassifiedText
-from src.LabelTransformer import Label
+from TextClassifier import ClassifiedText
+from LabelTransformer import Label
 
 
 class Chapter:
