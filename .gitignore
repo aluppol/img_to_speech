@@ -54,3 +54,11 @@ processed_images/
 # Ignore PyTorch model files
 *.pth
 
+# Ignore HF models:
+# Ignore all folders ending with "model"
+**/*model/
+
+# Keep specific files inside model folders (optional)
+!**/*model/config.json
+!**/*model/tokenizer.json
+!**/*model/vocab.txt

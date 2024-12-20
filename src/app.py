@@ -27,7 +27,7 @@ def generate_training_data(path: str):
   safe_training_data(featured_text, path)
 
 def train_model(path: str, epochs=5, loss_limit=0.5):
-  model_path = "src/text_classifier_model.pth"
+  model_path = "src/models/text_classifier_model"
   bert_model_name = "bert-base-uncased"
   num_numeric_features = 7 # 
   num_classes = len(Label) + 1

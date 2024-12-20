@@ -1,4 +1,4 @@
-from transformers import BertModel, BertTokenizer
+from transformers import BertModel, BertTokenizer, PreTrainedModel, PretrainedConfig
 import heapq
 import numpy as np
 import torch
@@ -24,14 +24,14 @@ class ClassifiedText:
     self.text = text
 
 
-class TextClassifierModel(nn.Module):
-  def __init__(self, bert_model_name: str, num_numeric_features: int, num_classes: int):
-    super(TextClassifierModel, self).__init__()
+class TextClassifierModel(PreTrainedModel):
+  def __init__(self, config: PretrainedConfig, bert_model_name: str, num_numeric_features: int, num_classes: int):
+    super(TextClassifierModel, self).__init__(config)
 
     # Pre-trained BERT for text embeddings
     self.bert = BertModel.from_pretrained(bert_model_name)
-    self.numeric_features_layer = nn.Linear(num_numeric_features, 128)
-    self.combined_layer = nn.Linear(768 + 128, 256)
+    self.numeric_features = nn.Linear(num_numeric_features, 128)
+    self.combined_layer = nn.Linear(self.bert.config.hidden_size + 128, 256)
     self.output_layer = nn.Linear(256, num_classes)
     self.relu = nn.ReLU()
 
@@ -40,7 +40,7 @@ class TextClassifierModel(nn.Module):
     bert_output = self.bert(**text).pooler_output
 
     # Numeric feature transformation
-    numeric_transformed = self.relu(self.numeric_features_layer(numeric_features))
+    numeric_transformed = self.relu(self.numeric_features(numeric_features))
 
     # Combine both features
     combined = torch.cat((bert_output, numeric_transformed), dim=1)   # Shape: (batch_size, 896)
@@ -51,19 +51,26 @@ class TextClassifierModel(nn.Module):
 
 
 class TextClassifier:
-  def __init__(self, model_path: str, bert_model_name: str, num_numeric_features: int, num_classes: int):
-    self.model_path = Path(model_path) if Path(model_path).exists() else None
-    self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
+  def __init__(self, model_dir: str, bert_model_name: str, num_numeric_features: int, num_classes: int):
+    self.model_dir = Path(model_dir) if Path(model_dir).exists() and any(Path(model_dir).iterdir()) else None
     self.scaler = MinMaxScaler()
     self.loss_fn = nn.CrossEntropyLoss()
     pretrain_model = False
 
     # Check if the model exists; otherwise, initialize a new one
-    if self.model_path:
-      self.model = torch.load(self.model_path)
+    if self.model_dir:
+      print(f"Loading model from {model_dir}...")
+      self.tokenizer = BertTokenizer.from_pretrained(self.model_dir)
+      self.model = TextClassifierModel.from_pretrained(self.model_dir)
     else:
-      self.model = TextClassifierModel(bert_model_name, num_numeric_features, num_classes)
-      self.model_path = Path(model_path)
+      print(f"No pre-trained model found at {model_dir}. Initializing a new model...")
+      self.tokenizer = BertTokenizer.from_pretrained(bert_model_name)
+      self.model = TextClassifierModel(
+        config=PretrainedConfig(),
+        bert_model_name=bert_model_name,
+        num_numeric_features=num_numeric_features,
+        num_classes=num_classes,
+      )
       pretrain_model = True
 
     self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
@@ -71,18 +78,48 @@ class TextClassifier:
     if pretrain_model:
       self.train_model('statics/model_training_data/roadto')
 
+
+  @classmethod
+  def from_pretrained(cls, load_dir: Path):
+    config = PretrainedConfig.from_pretrained(load_dir)
+    tokenizer = BertTokenizer.from_pretrained(load_dir)
+    model = TextClassifierModel.from_pretrained(load_dir)
+
+    # Create an instance of TextClassifier
+    instance = cls(
+      model_dir=None,
+      bert_model_name=config.bert_model_name,
+      num_numeric_features=config.num_numeric_features,
+      num_classes=config.num_classes,
+    )
+
+    instance.tokenizer = tokenizer
+    instance.model = model
+    return instance
   
+
   def predict(self, text_data: List[str], numeric_features: List[List[float]]):
+    if len(text_data) != len(numeric_features):
+      raise ValueError("Mismatch: text_data and numeric_features must have the same length.")
+
     self.model.eval()
     with torch.no_grad():
       encoded_text = self.tokenizer(text_data, return_tensors='pt', padding=True, truncation=True)
       numeric_features_tensor = torch.tensor(numeric_features, dtype=torch.float32)
+
+      # Ensure tensors are on the same device as the model
+      device = next(self.model.parameters()).device
+      encoded_text = {key: val.to(device) for key, val in encoded_text.items()}
+      numeric_features_tensor = numeric_features_tensor.to(device)
+
       prediction = self.model(encoded_text, numeric_features_tensor)
       return torch.argmax(prediction, dim=1).tolist()
     
-  def save_model(self):
-    torch.save(self.model, self.model_path)
-
+  def save_model(self, save_dir: Path):
+    if not save_dir.exists():
+      save_dir.mkdir(parents=True, exist_ok=True)
+      self.model.save_pretrained(save_dir)
+      self.tokenizer.save_pretrained(save_dir)
 
   def preprocess_input(self, featured_text: List[FeaturedText]) -> Tuple[List[str], np.ndarray]:
     text_data = [fte['text'] for fte in featured_text]
@@ -117,6 +154,18 @@ class TextClassifier:
           heapq.heappush(training_queue, (-loss, dataset_path)) # invert sign to make min heap
       self.save_model()
   
+  def classify_featured_text(self, featured_text: List[FeaturedText]) -> List[ClassifiedText]:
+    text, numeric_features = self.preprocess_input(featured_text)
+    labels = self.predict(text, numeric_features)
+    
+    result: List[ClassifiedText] = []
+
+    for i in range(len(text)):
+      result.append(ClassifiedText(label=labels[i], text=text[i]))
+
+    return result
+
+
   def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
     self.model.train()
     for epoch in range(epochs):
@@ -136,14 +185,3 @@ class TextClassifier:
 
       print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
     return loss.item()
-
-  def classify_featured_text(self, featured_text: List[FeaturedText]) -> List[ClassifiedText]:
-    text, numeric_features = self.preprocess_input(featured_text)
-    labels = self.predict(text, numeric_features)
-    
-    result: List[ClassifiedText] = []
-
-    for i in range(len(text)):
-      result.append(ClassifiedText(label=labels[i], text=text[i]))
-
-    return result
