@@ -4,7 +4,7 @@ from pathlib import Path
 
 from TextExtractor import TextExtractor
 from TextClassifier import TextClassifier, TrainingData
-from LabelTransformer import Label, LabelTransformer
+from LabelTransformer import LabelTransformer
 from TextAssembler import TextAssembler
 
 
@@ -12,11 +12,8 @@ def generate_training_data(path: str):
   text_extractor = TextExtractor()
   label_transformer = LabelTransformer()
 
-  model_path = 'src/text_classifier_model.pth'
-  bert_model_name = 'bert-base-uncased'
-  num_numeric_features = 7 # 
-  num_classes = len(Label) + 1
-  text_classifier = TextClassifier(model_path, bert_model_name, num_numeric_features, num_classes)
+  model_path = 'src/models/book_text_classifier_model'
+  text_classifier = TextClassifier(model_path)
     
   from_page, to_page = (102, 102)
   featured_text = text_extractor.extract('statics/roadto.pdf', from_page, to_page)
@@ -48,13 +45,6 @@ def save_to_json(data, path: str):
   with open(path, 'w', encoding='utf-8') as file:
     json.dump(data, file, ensure_ascii=False, indent=4)
 
-
-if __name__ == '__main__':
-  # pdf_to_voice_pipeline('statics/roadto.pdf')
-  # generate_training_data('statics/model_training_data/roadto/change_name.json')
-  train_text_classifier('statics/model_training_data/roadto', 'src/models/book_text_classifier_model')
-
-
 def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
   text_extractor = TextExtractor()
   text_assembler = TextAssembler()
@@ -77,3 +67,8 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
           
   except Exception as e:
       print(f'Error: {e}')
+
+if __name__ == '__main__':
+  # pdf_to_voice_pipeline('statics/roadto.pdf')
+  # generate_training_data('statics/model_training_data/roadto/change_name.json')
+  train_text_classifier('statics/model_training_data/roadto', 'src/models/book_text_classifier_model', loss_limit=4)
