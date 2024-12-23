@@ -55,10 +55,4 @@ processed_images/
 *.pth
 
 # Ignore HF models:
-# Ignore all folders ending with "model"
-**/*model/
-
-# Keep specific files inside model folders (optional)
-!**/*model/config.json
-!**/*model/tokenizer_config.json
-!**/*model/vocab.txt
+src/models
