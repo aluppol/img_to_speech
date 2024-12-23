@@ -6,6 +6,7 @@ from TextExtractor import TextExtractor
 from TextClassifier import TextClassifier, TrainingData
 from LabelTransformer import LabelTransformer
 from TextAssembler import TextAssembler
+from TextToSpeech import TextToSpeech
 
 
 def generate_training_data(path: str):
@@ -68,7 +69,12 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
   except Exception as e:
       print(f'Error: {e}')
 
+def train_text_to_speech(model_path: str):
+  text_to_speech = TextToSpeech(model_path)
+  text_to_speech.save_model(Path(model_path))
+
 if __name__ == '__main__':
   # pdf_to_voice_pipeline('statics/roadto.pdf')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
-  train_text_classifier('statics/model_training_data/roadto', 'src/models/img_to_speech-book_text_classifier', loss_limit=4)
+  # train_text_classifier('statics/model_training_data/roadto', 'src/models/img_to_speech-book_text_classifier', loss_limit=4)
+  train_text_to_speech('src/models/img_to_speech-text_to_speech_model')

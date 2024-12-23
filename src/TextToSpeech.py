@@ -16,6 +16,12 @@ class TextToSpeech:
             outputs = self.model(inputs['input_ids'])
         return outputs.waveform
 
+    def save_model(self, save_dir: Path):
+        if not save_dir.exists():
+            save_dir.mkdir(parents=True, exist_ok=True)
+        self.model.save_pretrained(save_dir)
+        self.tokenizer.save_pretrained(save_dir)
+
     def __load_model(self, model_source: str):
         self.tokenizer = VitsTokenizer.from_pretrained(model_source)
         self.model = VitsModel.from_pretrained(model_source)
