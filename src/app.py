@@ -71,4 +71,4 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
 if __name__ == '__main__':
   # pdf_to_voice_pipeline('statics/roadto.pdf')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
-  train_text_classifier('statics/model_training_data/roadto', 'src/models/book_text_classifier_model', loss_limit=4)
+  train_text_classifier('statics/model_training_data/roadto', 'src/models/img_to_speech-book_text_classifier', loss_limit=4)

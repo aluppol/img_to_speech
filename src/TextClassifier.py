@@ -1,4 +1,4 @@
-from transformers import BertModel, BertTokenizer, PreTrainedModel, PretrainedConfig, AutoModel, AutoTokenizer
+from transformers import BertModel, BertTokenizer, PreTrainedModel, PretrainedConfig
 import heapq
 import numpy as np
 import torch
