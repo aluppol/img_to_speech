@@ -1,4 +1,4 @@
-from transformers import VitsTokenizer, VitsModel, set_seed
+from transformers import VitsTokenizer, VitsModel, set_seed, Trainer, TrainingArguments
 import torch
 from pathlib import Path
 import torchaudio
@@ -34,7 +34,10 @@ class TextToSpeech:
 
 
 class TextToSpeechPipeline():
-    def save_waveform_as_audio(waveform: torch.Tensor, file_path: str):
+    def __init__(self):
+        pass
+
+    def save_waveform_as_audio(self, waveform: torch.Tensor, file_path: str):
         """
         Saves a PyTorch tensor (waveform) to an audio file.
         
@@ -44,4 +47,4 @@ class TextToSpeechPipeline():
         """
 
         # Save as a .wav file using torchaudio
-        torchaudio.save(file_path, waveform, 22050)  # 22050 is a common sample rate - the quality of audio treck
+        torchaudio.save(file_path, waveform, 22050, format='wav')  # 22050 is a common sample rate - the quality of audio treck

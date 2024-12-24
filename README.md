@@ -61,6 +61,11 @@
    ```bash
    pip install -r requirements.txt
 
+3. Install sox:
+   ```bash
+   sudo apt-get install sox libsox-dev libsox-fmt-all
+   sudo apt-get install libsndfile1
+
 
 
 ## Licensing
