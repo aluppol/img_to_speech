@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
 from PIL import UnidentifiedImageError
-from src.TextExtractor import TextExtractor
+from src.Text_Extractor_Outdated import TextExtractor
 
 
 class TestTextExtractor(unittest.TestCase):

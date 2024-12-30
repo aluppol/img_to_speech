@@ -66,6 +66,11 @@
    sudo apt-get install sox libsox-dev libsox-fmt-all
    sudo apt-get install libsndfile1
 
+4. Install tesseract (for text from image extraction):
+   ```bash
+   sudo apt-get install tesseract-ocr
+
+
 
 
 ## Licensing

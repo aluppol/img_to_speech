@@ -3,7 +3,7 @@ import json
 import traceback
 from pathlib import Path
 
-from TextExtractor import TextExtractor
+from TextExtractor import PdfTextExtractor
 from TextClassifier import TextClassifier, TrainingData
 from LabelTransformer import LabelTransformer
 from TextAssembler import TextAssembler
@@ -11,7 +11,7 @@ from TextToSpeech import TextToSpeech, TextToSpeechPipeline
 
 
 def generate_training_data(path: str):
-  text_extractor = TextExtractor()
+  text_extractor = PdfTextExtractor()
   label_transformer = LabelTransformer()
 
   model_path = 'src/models/book_text_classifier_model'
@@ -48,7 +48,7 @@ def save_to_json(data, path: str):
     json.dump(data, file, ensure_ascii=False, indent=4)
 
 def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
-  text_extractor = TextExtractor()
+  text_extractor = PdfTextExtractor()
   text_assembler = TextAssembler()
 
   model_path = Path('src/models/img_to_speech-book_text_classifier_model')
@@ -73,8 +73,14 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
       print(f'Error: {e}')
       traceback.print_exc()
 
+def convert_pdf_to_wav(pdf_path: str, wav_output_dir_path: str):
+  text_extractor = PdfTextExtractor()
+  for featured_text_chunk in text_extractor.extract(pdf_path):
+      print(featured_text_chunk)
+
 if __name__ == '__main__':
-  pdf_to_voice_pipeline('statics/roadto.pdf', 'statics/output_audio')
+  # pdf_to_voice_pipeline('statics/roadto.pdf', 'statics/output_audio')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
   # train_text_classifier('statics/model_training_data/roadto', 'src/models/img_to_speech-book_text_classifier', loss_limit=4)
   # train_text_to_speech('src/models/img_to_speech-text_to_speech_model')
+  convert_pdf_to_wav('statics/roadto_15.pdf', 'statics/output_audio')

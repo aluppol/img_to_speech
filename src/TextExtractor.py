@@ -1,32 +1,78 @@
 import pytesseract
-from PIL import Image, UnidentifiedImageError
+from PIL import Image
 from pathlib import Path
-from typing import Optional, Set, TypedDict, Tuple, List, Generator
-import pymupdf
+from typing import Optional, Set, Dict, Any, List, Generator
+from pdf2image import convert_from_path
+from abc import ABC, abstractmethod
+import cv2
+import numpy as np
 
 
-class UnsupportedExtensionError(ValueError):
-    pass
+class FeaturedText():
+    def __init__(
+            self,
+            level: int,
+            page_number: int,
+            block_number: int,
+            paragraph_number: int, 
+            line_number: int,
+            word_number: int,
+            left_position: int,
+            top_position: int, 
+            box_width: int,
+            box_height: int,
+            confidence_score: int,
+            text_content: str,
+        ):
+        self.level: int = level
+        self.page_number: int = page_number
+        self.block_number: int = block_number
+        self.paragraph_number: int = paragraph_number
+        self.line_number: int = line_number
+        self.word_number: int = word_number
+        self.left_position: int = left_position
+        self.top_position: int = top_position
+        self.box_width: int = box_width
+        self.box_height: int = box_height
+        self.confidence_score: int = confidence_score
+        self.text_content: str = text_content
 
-
-class NotImplementedExtensionError(ValueError):
-    pass
-
-
-class FeaturedText(TypedDict):
-    text: str  # The text content (e.g., a word or phrase).
-    size: float  # The font size or relative size of the text.
-    flags: int  # Flags providing metadata (e.g., styling or annotations).
-    bbox: Tuple[float, float, float, float]  # Bounding box (x1, y1, x2, y2).
-    page: int  # Page number where the text appears.
-
-
-class TextExtractor:
-    """A class to handle text extraction from any type of img based files."""
+    @classmethod
+    def from_recognized_data(cls, recognized_image_data: Dict[str, Any], index: int) -> 'FeaturedText':
+        return cls(
+            level=recognized_image_data['level'][index],
+            page_number=recognized_image_data['page_num'][index],
+            block_number=recognized_image_data['block_num'][index],
+            paragraph_number=recognized_image_data['par_num'][index],
+            line_number=recognized_image_data['line_num'][index],
+            word_number=recognized_image_data['word_num'][index],
+            left_position=recognized_image_data['left'][index],
+            top_position=recognized_image_data['top'][index],
+            box_width=recognized_image_data['width'][index],
+            box_height=recognized_image_data['height'][index],
+            confidence_score=recognized_image_data['conf'][index],
+            text_content=recognized_image_data['text'][index]
+        )
     
+    def __str__(self) -> str:
+        return (
+            f"Text: {self.text_content}\n"
+            f"Level: {self.level}\n"
+            f"Page Number: {self.page_number}\n"
+            f"Block Number: {self.block_number}\n"
+            f"Paragraph Number: {self.paragraph_number}\n"
+            f"Line Number: {self.line_number}\n"
+            f"Word Number: {self.word_number}\n"
+            f"Bounding Box - Left: {self.left_position}, Top: {self.top_position}, Width: {self.box_width}, Height: {self.box_height}\n"
+            f"Confidence Score: {self.confidence_score}"
+        )
 
+
+class TextExtractor(ABC):
+    """An abstract class to handle text extraction."""
+    
     @staticmethod
-    def __validate_file_path(file_path: str, expected_extensions: Optional[Set[str]] = None) -> Path:
+    def _validate_file_path(file_path: str, expected_extensions: Optional[Set[str]] = None) -> Path:
         """
         Validate the file path and extension.
 
@@ -49,118 +95,40 @@ class TextExtractor:
         if not path.is_file():
             raise IsADirectoryError(f"Path is not a file: {file_path}")
         if expected_extensions and path.suffix.lower() not in expected_extensions:
-            raise UnsupportedExtensionError(f"Unsupported file type: {file_path}. Expected extensions: {expected_extensions}")
+            raise ValueError(f'Unsupported file extention: "{path.suffix}". Expected extensions: {expected_extensions}')
         return path
 
+    @abstractmethod
+    def extract(file_path: str) -> List[FeaturedText]:
+        pass
+
+
+class PdfTextExtractor(TextExtractor):
+    def extract(self, pdf_file_path: str) -> Generator[FeaturedText, None, None]:
+        for page_image in self.__extract_page_images_from_pdf_path(pdf_file_path):
+            for featured_text in self.__extract_featured_text_from_image(page_image):
+                yield featured_text
+
+    def __extract_page_images_from_pdf_path(self, pdf_file_path: str) -> List[Image.Image]:
+        pdf_path = self._validate_file_path(file_path=pdf_file_path, expected_extensions=set(['.pdf']))
+        return convert_from_path(pdf_path, dpi=300)
+
+    def __extract_featured_text_from_image(self, image: Image) -> List[FeaturedText]:
+        prepared_image = self.__prepare_image_for_text_extraction(image=image)
+        return self.__extract_featured_text_from_prepared_image(image=prepared_image)
 
     @staticmethod
-    def extract(file_path: str, from_page: int = None, to_page: int = None):
-        """
-        Master method to convert an image to text using Tesseract OCR.
-
-        Args:
-            image_path (str): Path to the image file.
-
-        Raises:
-            FileNotFoundError: If the file does not exist.
-            IsADirectoryError: If the provided path is a directory instead of a file.
-            ValueError: If the file extension is not supported or the image cannot be processed.
-            RuntimeError: If any other error occurs during processing.
-
-        Returns:
-            str: Extracted text from the image.
-        """
-        try:
-            # supported extensions
-            supported_extensions = set()
-
-            picture_extensions = set(Image.registered_extensions())
-            supported_extensions.update(picture_extensions)
-            supported_extensions.add('.pdf')
-
-            path = TextExtractor.__validate_file_path(file_path, supported_extensions)
-
-            match path.suffix.lower():
-                case '.pdf':
-                    return TextExtractor.__pdf_to_text(path, from_page, to_page)
-                
-                case _ if path.suffix.lower() in picture_extensions:
-                    return TextExtractor.__picture_to_text(path)
-                
-                case _:
-                    raise NotImplementedExtensionError(f"Provided extension is not implemented '{path.suffix.lower()}'")
-
-        except (UnsupportedExtensionError, NotImplementedExtensionError) as e:
-            raise ValueError(e)    
-        except UnidentifiedImageError:
-            raise ValueError(f"Cannot process the image: {file_path}")
-        except Exception as e:
-            raise RuntimeError(f"An error occurred while processing the image: {str(e)}")
-
-
+    def __prepare_image_for_text_extraction(image: Image) -> cv2.typing.MatLike:
+        opencv_format = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        grayscale = cv2.cvtColor(opencv_format, cv2.COLOR_RGB2BGR)
+        _, thresh = cv2.threshold(grayscale, 150, 255, cv2.THRESH_BINARY)
+        return thresh
+    
     @staticmethod
-    def __pdf_to_text(path: Path, from_page: int = None, to_page: int = None) -> Generator[List[FeaturedText], None, None]:
-        """
-            Extracts text from each page of a PDF one by one in a memory-efficient manner.
-            This function is a generator that yields the text of each page, making it suitable for large PDFs that cannot be loaded entirely into memory.
+    def __extract_featured_text_from_prepared_image(image: cv2.typing.MatLike) -> List[FeaturedText]:
+        result: List[FeaturedText] = []
+        recognized_image_data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
+        for i in range(len(next(iter(recognized_image_data.values())))):
+            result.append(FeaturedText.from_recognized_data(recognized_image_data=recognized_image_data, index=i))
+        return result
             
-            Args:
-                pdf_path (str): Path to the PDF file to be processed.
-                from_page (int, def: 0): Page number to start extraction.
-                to_page (int, def: last page): Last page to extract text from.
-
-            Yields: List[FeaturedText]: The featured text of each page in the PDF.
-        """
-        try:
-          doc = pymupdf.open(path)
-          last_page_num = len(doc) - 1
-          if not from_page:
-              from_page = 0
-          if not to_page:
-              to_page = last_page_num
-
-          for page in doc[from_page : to_page + 1]:
-            extracted_featured_text = []
-            blocks = page.get_text("dict")["blocks"]  # Extract blocks of text with metadata
-            for block in blocks:
-              if not "lines" in block:  # ignore img and other than text types of block
-                  continue
-              for line in block["lines"]:
-                for span in line["spans"]:
-                  extracted_featured_text.append({
-                    "text": span["text"],  # Actual text
-                    "size": span["size"],  # Font size
-                    "flags": span["flags"],  # Font style (e.g., bold, italic)
-                    "bbox": span["bbox"],  # Position on the page
-                    "len": len(span["text"]),
-                    "page": page.number + 1
-                  })
-            yield extracted_featured_text
-        except Exception as e:
-            raise RuntimeError(f"An error occurred while processing the PDF: {str(e)}")
-
-        finally:
-            doc.close()
-
-    @staticmethod
-    def __picture_to_text(path: Path) -> str:
-        """
-        Convert an image to text using Tesseract OCR.
-
-        Args:
-            image_path (str): Path to the image file.
-
-        Raises:
-            ValueError: If the file cannot be processed as an image.
-            RuntimeError: If an error occurs during processing.
-
-        Returns:
-            str: Extracted text from the image.
-        """
-        try:
-            image = Image.open(path)
-            return pytesseract.image_to_string(image)
-        except UnidentifiedImageError:
-            raise ValueError(f"Cannot process the image: {path}")
-        except Exception as e:
-            raise RuntimeError(f"An error occurred while processing the image: {str(e)}")
