@@ -1,7 +1,7 @@
 from typing import List, Generator
 import re
 
-from TextClassifier import ClassifiedText
+from TextCategorizer import ClassifiedText
 from LabelTransformer import Label
 
 

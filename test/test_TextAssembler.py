@@ -3,7 +3,7 @@ import json
 
 from src.TextAssembler import TextAssembler
 from src.LabelTransformer import LabelTransformer
-from src.TextClassifier import ClassifiedText
+from src.TextCategorizer import ClassifiedText
 
 
 class TestTextAssembler(unittest.TestCase):

@@ -102,4 +102,6 @@ Feel free to reach out with any questions, suggestions, or contributions.
 Copyright (c) 2024 Albert Luppol
 
 
-
+Usefull dev commands:
+```bash
+pdftk statics/roadto.pdf cat 9 output statics/roadto_9.pdf

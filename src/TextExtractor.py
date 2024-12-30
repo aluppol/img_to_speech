@@ -106,8 +106,7 @@ class TextExtractor(ABC):
 class PdfTextExtractor(TextExtractor):
     def extract(self, pdf_file_path: str) -> Generator[FeaturedText, None, None]:
         for page_image in self.__extract_page_images_from_pdf_path(pdf_file_path):
-            for featured_text in self.__extract_featured_text_from_image(page_image):
-                yield featured_text
+            yield self.__extract_featured_text_from_image(page_image)
 
     def __extract_page_images_from_pdf_path(self, pdf_file_path: str) -> List[Image.Image]:
         pdf_path = self._validate_file_path(file_path=pdf_file_path, expected_extensions=set(['.pdf']))
