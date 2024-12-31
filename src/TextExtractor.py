@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 
 
-class FeaturedText():
+class FeaturedWord():
     def __init__(
             self,
             level: int,
@@ -38,7 +38,7 @@ class FeaturedText():
         self.text_content: str = text_content
 
     @classmethod
-    def from_recognized_data(cls, recognized_image_data: Dict[str, Any], index: int) -> 'FeaturedText':
+    def from_recognized_data(cls, recognized_image_data: Dict[str, Any], index: int) -> 'FeaturedWord':
         return cls(
             level=recognized_image_data['level'][index],
             page_number=recognized_image_data['page_num'][index],
@@ -99,12 +99,12 @@ class TextExtractor(ABC):
         return path
 
     @abstractmethod
-    def extract(file_path: str) -> List[FeaturedText]:
+    def extract(file_path: str) -> List[FeaturedWord]:
         pass
 
 
 class PdfTextExtractor(TextExtractor):
-    def extract(self, pdf_file_path: str) -> Generator[FeaturedText, None, None]:
+    def extract(self, pdf_file_path: str) -> Generator[List[FeaturedWord], None, None]:
         for page_image in self.__extract_page_images_from_pdf_path(pdf_file_path):
             yield self.__extract_featured_text_from_image(page_image)
 
@@ -112,7 +112,7 @@ class PdfTextExtractor(TextExtractor):
         pdf_path = self._validate_file_path(file_path=pdf_file_path, expected_extensions=set(['.pdf']))
         return convert_from_path(pdf_path, dpi=300)
 
-    def __extract_featured_text_from_image(self, image: Image) -> List[FeaturedText]:
+    def __extract_featured_text_from_image(self, image: Image) -> List[FeaturedWord]:
         prepared_image = self.__prepare_image_for_text_extraction(image=image)
         return self.__extract_featured_text_from_prepared_image(image=prepared_image)
 
@@ -124,10 +124,10 @@ class PdfTextExtractor(TextExtractor):
         return thresh
     
     @staticmethod
-    def __extract_featured_text_from_prepared_image(image: cv2.typing.MatLike) -> List[FeaturedText]:
-        result: List[FeaturedText] = []
+    def __extract_featured_text_from_prepared_image(image: cv2.typing.MatLike) -> List[FeaturedWord]:
+        result: List[FeaturedWord] = []
         recognized_image_data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
         for i in range(len(next(iter(recognized_image_data.values())))):
-            result.append(FeaturedText.from_recognized_data(recognized_image_data=recognized_image_data, index=i))
+            result.append(FeaturedWord.from_recognized_data(recognized_image_data=recognized_image_data, index=i))
         return result
             

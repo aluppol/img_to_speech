@@ -8,12 +8,12 @@ from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from TextExtractor import FeaturedText
+from TextExtractor import FeaturedWord
 from LabelTransformer import LabelTransformer
 from LabelTransformer import Label
 
 
-class TrainingData(FeaturedText):
+class TrainingData(FeaturedWord):
   label: str
 
 
@@ -122,7 +122,7 @@ class TextClassifier:
     self.model.save_pretrained(save_dir)
     self.tokenizer.save_pretrained(save_dir)
 
-  def preprocess_input(self, featured_text: List[FeaturedText]) -> Tuple[List[str], np.ndarray]:
+  def preprocess_input(self, featured_text: List[FeaturedWord]) -> Tuple[List[str], np.ndarray]:
     text_data = [fte['text'] for fte in featured_text]
 
     numeric_features = [
@@ -156,7 +156,7 @@ class TextClassifier:
 
       print('Training ... completed')
   
-  def classify_featured_text(self, featured_text: List[FeaturedText]) -> List[ClassifiedText]:
+  def classify_featured_text(self, featured_text: List[FeaturedWord]) -> List[ClassifiedText]:
     text, numeric_features = self.preprocess_input(featured_text)
     labels = self.predict(text, numeric_features)
     

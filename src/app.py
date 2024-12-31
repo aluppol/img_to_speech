@@ -77,14 +77,15 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
 def convert_pdf_to_wav(pdf_path: str, wav_output_dir_path: str):
   text_extractor = PdfTextExtractor()
   text_classifier = TextClassifier()
-  for featured_text_page in text_extractor.extract(pdf_path):
-      grouped_featured_text_by_the_block = text_classifier.classify_page(featured_text_page=featured_text_page)
-      for t in grouped_featured_text_by_the_block[1]:
-        print(t)
+  for page_featured_words in text_extractor.extract(pdf_path):
+    featured_blocks = text_classifier.classify_page(page_featured_words=page_featured_words)
+    for featured_block in featured_blocks:
+      print(featured_block)
+    
 
 if __name__ == '__main__':
   # pdf_to_voice_pipeline('statics/roadto.pdf', 'statics/output_audio')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
   # train_text_classifier('statics/model_training_data/roadto', 'src/models/img_to_speech-book_text_classifier', loss_limit=4)
   # train_text_to_speech('src/models/img_to_speech-text_to_speech_model')
-  convert_pdf_to_wav('statics/roadto_9.pdf', 'statics/output_audio')
+  convert_pdf_to_wav('statics/roadto_36.pdf', 'statics/output_audio')
