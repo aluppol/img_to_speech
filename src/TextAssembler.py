@@ -1,7 +1,7 @@
 from typing import List, Generator
 import re
 
-from TextCategorizer import ClassifiedText
+from TextCategorizer import LabeledFeaturedBlock
 from LabelTransformer import Label
 
 
@@ -45,7 +45,7 @@ class TextAssembler:
         self.classification_mistakes = []
         self.chapter=None
 
-    def process_classified_text(self, classified_text: List[ClassifiedText]) -> Generator[Chapter, None, None]:
+    def process_classified_text(self, classified_text: List[LabeledFeaturedBlock]) -> Generator[Chapter, None, None]:
         for chunk in classified_text:
             match chunk.label:
                 case Label.TITLE.value:
@@ -107,7 +107,7 @@ class TextAssembler:
             self.title += text
             self.last_chunk_label = Label.TITLE
         elif self.last_chunk_label != Label.TITLE:
-            self.classification_mistakes.append(ClassifiedText(Label.TITLE, text))
+            self.classification_mistakes.append(LabeledFeaturedBlock(Label.TITLE, text))
 
     def __process_chapter_title(self, text: str):
         if self.last_chunk_label != Label.CHAPTER_TITLE:

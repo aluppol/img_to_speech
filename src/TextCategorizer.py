@@ -8,25 +8,21 @@ from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from TextExtractor import FeaturedWord
-from LabelTransformer import LabelTransformer
-from LabelTransformer import Label
+from TextClassifier import FeaturedBlock
+from LabelTransformer import LabelTransformer, Label
 
 
-class TrainingData(FeaturedWord):
-  label: str
+class LabeledFeaturedBlock(FeaturedBlock):
+    def __init__(self, featured_block: FeaturedBlock, label: str):
+        self.__dict__.update(featured_block.__dict__)
+        self.label = label
+
+    def __str__(self) -> str:
+        base_str = super().__str__()
+        return f'{base_str}\nLabel: {self.label}'
 
 
-class ClassifiedText:
-  label: int
-  text: str
-
-  def __init__(self, label: int, text: str):
-    self.label = label
-    self.text = text
-
-
-class TextClassifierModelConfig(PretrainedConfig):
+class TextCategorizerModelConfig(PretrainedConfig):
     def __init__(
         self,
         bert_model_name: str = None,
@@ -47,11 +43,11 @@ class TextClassifierModelConfig(PretrainedConfig):
         self.num_classes = num_classes
 
 class TextClassifierModel(PreTrainedModel):
-  config_class = TextClassifierModelConfig
+  config_class = TextCategorizerModelConfig
 
   def __init__(
       self,
-      config=TextClassifierModelConfig(),
+      config=TextCategorizerModelConfig(),
     ):
     super(TextClassifierModel, self).__init__(config)
 
@@ -122,7 +118,7 @@ class TextClassifier:
     self.model.save_pretrained(save_dir)
     self.tokenizer.save_pretrained(save_dir)
 
-  def preprocess_input(self, featured_text: List[FeaturedWord]) -> Tuple[List[str], np.ndarray]:
+  def preprocess_input(self, featured_text: List[FeaturedBlock]) -> Tuple[List[str], np.ndarray]:
     text_data = [fte['text'] for fte in featured_text]
 
     numeric_features = [
@@ -145,7 +141,7 @@ class TextClassifier:
         last_loss = -last_loss  # invert the sign from min heap to return to normal form
         print(f'Dataset f{dataset_path} ... processing')
         with open(dataset_path, 'r') as json_file:
-          training_dataset: List[TrainingData] = json.load(json_file)
+          training_dataset: List[LabeledFeaturedBlock] = json.load(json_file)
         labels_str = [row["label"] for row in training_dataset]
         labels = [label_transformer.to_int(label) for label in labels_str]
         text_set, feature_set = self.preprocess_input(training_dataset)
@@ -156,14 +152,14 @@ class TextClassifier:
 
       print('Training ... completed')
   
-  def classify_featured_text(self, featured_text: List[FeaturedWord]) -> List[ClassifiedText]:
+  def classify_featured_text(self, featured_text: List[FeaturedBlock]) -> List[LabeledFeaturedBlock]:
     text, numeric_features = self.preprocess_input(featured_text)
     labels = self.predict(text, numeric_features)
     
-    result: List[ClassifiedText] = []
+    result: List[LabeledFeaturedBlock] = []
 
     for i in range(len(text)):
-      result.append(ClassifiedText(label=labels[i], text=text[i]))
+      result.append(LabeledFeaturedBlock(label=labels[i], text=text[i]))
 
     return result
 
@@ -201,7 +197,7 @@ class TextClassifier:
       num_numeric_features: int = None,
       num_classes: int = None,
     ):
-    config = TextClassifierModelConfig(
+    config = TextCategorizerModelConfig(
       bert_model_name=bert_model_name,
       num_numeric_features=num_numeric_features,
       num_classes=num_classes,

@@ -52,9 +52,9 @@ class FeaturedBlock:
 class TextClassifier:
     def classify_page(self, page_featured_words: List[FeaturedWord]) -> List[FeaturedBlock]:
         filtered_page_featured_words = self.__filter_page_featured_words(page_featured_words=page_featured_words)
-        grouped_featured_words_by_the_blocks =  self.__group_featured_words_by_the_block(filtered_page_featured_words)
-        featured_blocks = [FeaturedBlock(grouped_featured_words_by_the_block) for grouped_featured_words_by_the_block in grouped_featured_words_by_the_blocks]
-        return featured_blocks
+        grouped_featured_words_by_the_blocks_page =  self.__group_featured_words_by_the_block(filtered_page_featured_words)
+        featured_blocks_page = [FeaturedBlock(grouped_featured_words_by_the_block) for grouped_featured_words_by_the_block in grouped_featured_words_by_the_blocks_page]
+        return featured_blocks_page
     
     @staticmethod
     def __filter_page_featured_words(page_featured_words: List[FeaturedWord]) -> List[FeaturedWord]:
