@@ -1,6 +1,6 @@
 from sklearn.cluster import AgglomerativeClustering
 import numpy as np
-from typing import List, Dict
+from typing import List, Dict, Iterator
 
 from TextExtractor import FeaturedWord
 
@@ -35,7 +35,7 @@ class FeaturedBlock:
             else:
                 paragraphs[featured_word.paragraph_number] += ' ' + featured_word.text_content
 
-        return paragraphs.values()
+        return list(paragraphs.values())
     
     def __str__(self) -> str:
         paragraphs_text = '\n'.join(self.paragraphs)
@@ -49,12 +49,23 @@ class FeaturedBlock:
         )
 
 
+class FeaturedPage(List[FeaturedBlock]):
+    def __init__(self, blocks: List[FeaturedBlock] = []):
+        super().__init__(blocks)
+    
+
+class FeaturedBook(List[FeaturedPage]):
+    def __init__(self, pages: List[FeaturedPage] = []):
+        super().__init__(pages)
+    
+
+
 class TextClassifier:
-    def classify_page(self, page_featured_words: List[FeaturedWord]) -> List[FeaturedBlock]:
+    def classify_page(self, page_featured_words: List[FeaturedWord]) -> FeaturedPage:
         filtered_page_featured_words = self.__filter_page_featured_words(page_featured_words=page_featured_words)
         grouped_featured_words_by_the_blocks_page =  self.__group_featured_words_by_the_block(filtered_page_featured_words)
-        featured_blocks_page = [FeaturedBlock(grouped_featured_words_by_the_block) for grouped_featured_words_by_the_block in grouped_featured_words_by_the_blocks_page]
-        return featured_blocks_page
+        featured_page = FeaturedPage([FeaturedBlock(grouped_featured_words_by_the_block) for grouped_featured_words_by_the_block in grouped_featured_words_by_the_blocks_page])
+        return featured_page
     
     @staticmethod
     def __filter_page_featured_words(page_featured_words: List[FeaturedWord]) -> List[FeaturedWord]:

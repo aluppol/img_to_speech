@@ -8,7 +8,7 @@ from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from TextClassifier import FeaturedBlock
+from TextClassifier import FeaturedBlock, FeaturedPage
 from LabelTransformer import LabelTransformer, Label
 
 
@@ -118,7 +118,7 @@ class TextClassifier:
     self.model.save_pretrained(save_dir)
     self.tokenizer.save_pretrained(save_dir)
 
-  def preprocess_input(self, featured_text: List[FeaturedBlock]) -> Tuple[List[str], np.ndarray]:
+  def preprocess_input(self, featured_text: FeaturedPage) -> Tuple[List[str], np.ndarray]:
     text_data = [fte['text'] for fte in featured_text]
 
     numeric_features = [
@@ -152,7 +152,7 @@ class TextClassifier:
 
       print('Training ... completed')
   
-  def classify_featured_text(self, featured_text: List[FeaturedBlock]) -> List[LabeledFeaturedBlock]:
+  def classify_featured_text(self, featured_text: FeaturedPage) -> List[LabeledFeaturedBlock]:
     text, numeric_features = self.preprocess_input(featured_text)
     labels = self.predict(text, numeric_features)
     

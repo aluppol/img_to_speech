@@ -4,12 +4,13 @@ import traceback
 from pathlib import Path
 
 from TextExtractor import PdfTextExtractor
-from TextClassifier import TextClassifier
+from TextClassifier import TextClassifier, FeaturedBook
 from TextCategorizer import LabeledFeaturedBlock
 from LabelTransformer import LabelTransformer
 from TextAssembler import TextAssembler
 from TextVocalizer import TextToSpeech, TextToSpeechPipeline
 from FeatureNormalizer import BookFeatureNormalizerManager
+from utils import get_file_name_from_path
 
 
 def generate_training_data(path: str):
@@ -75,22 +76,22 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
       print(f'Error: {e}')
       traceback.print_exc()
 
+
 def convert_pdf_to_wav(pdf_path: str, wav_output_dir_path: str):
   text_extractor = PdfTextExtractor()
   text_classifier = TextClassifier()
   featured_words_pages = [featured_words_page for featured_words_page in text_extractor.extract(pdf_path)]
-  featured_blocks_pages = [text_classifier.classify_page(feautured_words_page) for feautured_words_page in featured_words_pages]
-  feature_normalizer = BookFeatureNormalizerManager(pdf_path).normalizer
-  normalized_featured_blocks_pages = [
-    [feature_normalizer.normalize(featured_block) for featured_block in featured_blocks_page]
-    for featured_blocks_page in featured_blocks_pages
-  ]
-  
-    
+  featured_book = FeaturedBook([text_classifier.classify_page(feautured_words_page) for feautured_words_page in featured_words_pages])
+  feature_normalizer = BookFeatureNormalizerManager(get_file_name_from_path(pdf_path), featured_book).normalizer
+  normalized_featured_book = feature_normalizer.normalize(featured_book)
+  for page in normalized_featured_book:
+    for block in page:
+      print(block)
+     
 
 if __name__ == '__main__':
   # pdf_to_voice_pipeline('statics/roadto.pdf', 'statics/output_audio')
   # generate_training_data('statics/model_training_data/roadto/change_name.json')
   # train_text_classifier('statics/model_training_data/roadto', 'src/models/img_to_speech-book_text_classifier', loss_limit=4)
   # train_text_to_speech('src/models/img_to_speech-text_to_speech_model')
-  convert_pdf_to_wav('statics/roadto.pdf', 'statics/output_audio')
+  convert_pdf_to_wav('statics/books/roadto.pdf', 'statics/output_audio')

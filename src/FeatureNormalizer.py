@@ -1,10 +1,10 @@
-from typing import List
+from typing import Any
 from copy import deepcopy
 import pickle
 from pathlib import Path
-from functools import singledispatch
+from functools import singledispatchmethod
 
-from TextClassifier import FeaturedBlock
+from TextClassifier import FeaturedBlock, FeaturedPage, FeaturedBook
 
 
 class BookFeatureNormalizerManager():
@@ -25,9 +25,9 @@ class BookFeatureNormalizerManager():
         def height(self):
             return self.page_bottom - self.page_top
         
-        @singledispatch
-        def train(self, featured_block):
-            raise TypeError("Unsupported type for normalization")
+        @singledispatchmethod
+        def train(self, featured_block: Any):
+            raise TypeError(f'Unsupported type "{type(featured_block)}" for normalization')
 
         @train.register
         def _(self, featured_block: FeaturedBlock) -> None:
@@ -39,18 +39,18 @@ class BookFeatureNormalizerManager():
             self.page_bottom = max(self.page_bottom, featured_block.top_position + featured_block.width)
 
         @train.register
-        def _(self, featured_blocks_page: List[FeaturedBlock]) -> None:
-            for featured_block in featured_blocks_page:
+        def _(self, featured_page: FeaturedPage) -> None:
+            for featured_block in featured_page:
                 self.train(featured_block)
 
         @train.register
-        def _(self, featured_blocks_pages: List[List[FeaturedBlock]]) -> None:
-            for featured_blocks_page in featured_blocks_pages:
-                self.train(featured_blocks_page)
+        def _(self, featured_book: FeaturedBook) -> None:
+            for featured_page in featured_book:
+                self.train(featured_page)
 
-        @singledispatch
-        def normalize(self, featured_block):
-            raise TypeError("Unsupported type for normalization")
+        @singledispatchmethod
+        def normalize(self, featured_block: Any):
+            raise TypeError(f'Unsupported type "{featured_block}" for normalization')
         
         @normalize.register
         def _(self, featured_block: FeaturedBlock) -> FeaturedBlock:
@@ -63,28 +63,36 @@ class BookFeatureNormalizerManager():
             return normalized_block
         
         @normalize.register
-        def _(self, featured_blocks_page: List[FeaturedBlock]) -> List[FeaturedBlock]:
-            normalized_featured_blocks_page: List[FeaturedBlock] = []
-            for featured_block in featured_blocks_page:
-                normalized_featured_blocks_page.append(self.normalize(featured_block))
+        def _(self, featured_page: FeaturedPage) -> FeaturedPage:
+            normalized_featured_page = FeaturedPage()
+            for featured_block in featured_page:
+                normalized_featured_page.append(self.normalize(featured_block))
+            return normalized_featured_page
 
         @normalize.register
-        def _(self, featured_blocks_pages: List[List[FeaturedBlock]]) -> List[List[FeaturedBlock]]:
-            normalized_featured_blocks_pages: List[List[FeaturedBlock]] = []
-            for featured_blocks_page in featured_blocks_pages:
-                normalized_featured_blocks_pages.append(self.normalize(featured_blocks_page))
+        def _(self, featured_book: FeaturedBook) -> FeaturedBook:
+            normalized_featured_book = FeaturedBook()
+            for featured_page in featured_book:
+                normalized_featured_book.append(self.normalize(featured_page))
+            return normalized_featured_book
+        
 
-    def __init__(self, book_path: str, dir_path_to_normalizers='statics/feature_normalizers'):
-        self.book_title = self.__extract_book_title_from_book_path(book_path)
+    def __init__(self, book_title: str, featured_book: FeaturedBook, dir_path_to_normalizers='statics/feature_normalizers'):
+        self.book_title = book_title
         self.dir_path_to_normalizers = dir_path_to_normalizers
 
         if self.__is_normalizer_for_book_exists():
-            self.normalizer: BookFeatureNormalizerManager.BookFeatureNormalizer = self.load_normalizer_for_book(self.book_title, dir_path_to_normalizers)
+            self.normalizer: BookFeatureNormalizerManager.BookFeatureNormalizer = self.load_normalizer_for_book()
         else:
-            # TODO init + train normalizer?
+            self.initiate_normalizer(featured_book)
+    
+    def initiate_normalizer(self, featured_book: FeaturedBook):
+        self.normalizer = self.BookFeatureNormalizer()
+        self.train_normalizer_with_preprocessed_book(featured_book)
+        self.save_feature_normalizer_for_book()
 
-    def train_normalizer_with_preprocessed_book(self, featured_blocks_pages: List[List[FeaturedBlock]]) -> None:
-        self.normalizer.train(featured_blocks_pages)
+    def train_normalizer_with_preprocessed_book(self, featured_book: FeaturedBook) -> None:
+        self.normalizer.train(featured_book)
 
     def save_feature_normalizer_for_book(self) -> None:
         with open(f'{self.dir_path_to_normalizers}/{self.book_title}.pkl', 'wb') as file:
@@ -98,6 +106,3 @@ class BookFeatureNormalizerManager():
         path = Path(f'{self.dir_path_to_normalizers}/{self.book_title}.pkl')
         return path.exists() and path.is_file()
     
-    @staticmethod
-    def __extract_book_title_from_book_path(book_path: str):
-        return Path(book_path).stem
