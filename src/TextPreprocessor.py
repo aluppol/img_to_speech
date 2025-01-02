@@ -22,6 +22,9 @@ class FeaturedBlock:
             if featured_words else None
         )
 
+        self.right_position = self.left_position + self.width
+        self.bottom_position = self.top_position + self.height
+
         self.paragraphs = self.__extract_paragraphs(featured_words)
         self.paragraphs_count = len(self.paragraphs)
 
@@ -42,9 +45,11 @@ class FeaturedBlock:
         return (
             f'Level: {self.level}\n'
             f'Font Size: {self.font_size}\n'
-            f'Bounding Box - Left: {self.left_position}, Top: {self.top_position}, Width: {self.width}, Height: {self.height}\n'
+            f'Left: {self.left_position}, Top: {self.top_position}, Right: {self.right_position}, Bottom: {self.bottom_position}\n'
+            f'Width: {self.width}, Height: {self.height}\n'
             f'Lines Count: {self.lines_count}\n'
             f'Words Count: {self.words_count}\n'
+            f'Paragraphs Count: {self.paragraphs_count}\n'
             f'Paragraphs:\n{paragraphs_text}'
         )
 
@@ -60,8 +65,8 @@ class FeaturedBook(List[FeaturedPage]):
     
 
 
-class TextClassifier:
-    def classify_page(self, page_featured_words: List[FeaturedWord]) -> FeaturedPage:
+class TextPreprocessor:
+    def preprocess_page(self, page_featured_words: List[FeaturedWord]) -> FeaturedPage:
         filtered_page_featured_words = self.__filter_page_featured_words(page_featured_words=page_featured_words)
         grouped_featured_words_by_the_blocks_page =  self.__group_featured_words_by_the_block(filtered_page_featured_words)
         featured_page = FeaturedPage([FeaturedBlock(grouped_featured_words_by_the_block) for grouped_featured_words_by_the_block in grouped_featured_words_by_the_blocks_page])

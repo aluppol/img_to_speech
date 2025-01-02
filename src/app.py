@@ -4,7 +4,7 @@ import traceback
 from pathlib import Path
 
 from TextExtractor import PdfTextExtractor
-from TextClassifier import TextClassifier, FeaturedBook
+from TextPreprocessor import TextPreprocessor, FeaturedBook
 from TextCategorizer import LabeledFeaturedBlock
 from LabelTransformer import LabelTransformer
 from TextAssembler import TextAssembler
@@ -18,7 +18,7 @@ def generate_training_data(path: str):
   label_transformer = LabelTransformer()
 
   model_path = 'src/models/book_text_classifier_model'
-  text_classifier = TextClassifier(model_path)
+  text_classifier = TextPreprocessor(model_path)
     
   from_page, to_page = (102, 102)
   featured_text = text_extractor.extract('statics/roadto.pdf', from_page, to_page)
@@ -30,7 +30,7 @@ def generate_training_data(path: str):
   safe_training_data(featured_text, path)
 
 def train_text_classifier(training_data_dir: str, model_dir: str, epochs=5, loss_limit=0.5):
-  text_classifier = TextClassifier(model_dir)
+  text_classifier = TextPreprocessor(model_dir)
     
   text_classifier.train_model(training_data_dir, epochs=epochs, loss_limit=loss_limit)
   if not text_classifier.model_dir.exists():
@@ -57,7 +57,7 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
   model_path = Path('src/models/img_to_speech-book_text_classifier_model')
   if not model_path.exists() or not any(model_path.iterdir()):
     model_path = 'aluppol/img_to_speech-book_text_classifier'
-  text_classifier = TextClassifier(model_path)
+  text_classifier = TextPreprocessor(model_path)
 
   try:
     for featured_text_page in text_extractor.extract(pdf_file_path, 40, 42):
@@ -79,10 +79,10 @@ def pdf_to_voice_pipeline(pdf_file_path: str, mp3_folder_path: str):
 
 def convert_pdf_to_wav(pdf_path: str, wav_output_dir_path: str):
   text_extractor = PdfTextExtractor()
-  text_classifier = TextClassifier()
+  text_preprocessor = TextPreprocessor()
   featured_words_pages = [featured_words_page for featured_words_page in text_extractor.extract(pdf_path)]
-  featured_book = FeaturedBook([text_classifier.classify_page(feautured_words_page) for feautured_words_page in featured_words_pages])
-  feature_normalizer = BookFeatureNormalizerManager(get_file_name_from_path(pdf_path), featured_book).normalizer
+  featured_book = FeaturedBook([text_preprocessor.preprocess_page(feautured_words_page) for feautured_words_page in featured_words_pages])
+  feature_normalizer = BookFeatureNormalizerManager(get_file_name_from_path(pdf_path), featured_book).normalizer   # get_file_name_from_path(pdf_path)
   normalized_featured_book = feature_normalizer.normalize(featured_book)
   for page in normalized_featured_book:
     for block in page:

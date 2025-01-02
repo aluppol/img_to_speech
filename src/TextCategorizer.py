@@ -8,7 +8,7 @@ from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from TextClassifier import FeaturedBlock, FeaturedPage
+from TextPreprocessor import FeaturedBlock, FeaturedPage
 from LabelTransformer import LabelTransformer, Label
 
 
