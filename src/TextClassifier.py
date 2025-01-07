@@ -3,12 +3,12 @@ import heapq
 import numpy as np
 import torch
 import torch.nn as nn
-from typing import List, Tuple
+from typing import List
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import json
 
-from TextPreprocessor import FeaturedBlock, FeaturedPage
+from TextPreprocessor import FeaturedBlock, FeaturedPage, FeaturedBook
 from LabelTransformer import LabelTransformer, Label
 
 
@@ -20,9 +20,25 @@ class LabeledFeaturedBlock(FeaturedBlock):
     def __str__(self) -> str:
         base_str = super().__str__()
         return f'{base_str}\nLabel: {self.label}'
+    
+
+class LabeledFeaturedPage(List[LabeledFeaturedBlock]):
+    def __init__(self, featured_page: FeaturedPage = [], labels = []):
+        if len(featured_page) != len(labels):
+          raise ValueError("Mismatch: featured_page and labels must have the same length.")
+
+        labeled_featured_blocks = []
+        for i in range(len(featured_page)):
+           labeled_featured_blocks.append(LabeledFeaturedBlock(featured_page[i], labels[i]))
+        super().__init__(labeled_featured_blocks)
 
 
-class TextCategorizerModelConfig(PretrainedConfig):
+class LabeledFeaturedBook(List[LabeledFeaturedPage]):
+    def __init__(self, pages: List[LabeledFeaturedPage] = []):
+        super().__init__(pages)
+
+
+class TextClassifierModelConfig(PretrainedConfig):
     def __init__(
         self,
         bert_model_name: str = None,
@@ -43,11 +59,11 @@ class TextCategorizerModelConfig(PretrainedConfig):
         self.num_classes = num_classes
 
 class TextClassifierModel(PreTrainedModel):
-  config_class = TextCategorizerModelConfig
+  config_class = TextClassifierModelConfig
 
   def __init__(
       self,
-      config=TextCategorizerModelConfig(),
+      config=TextClassifierModelConfig(),
     ):
     super(TextClassifierModel, self).__init__(config)
 
@@ -118,18 +134,6 @@ class TextClassifier:
     self.model.save_pretrained(save_dir)
     self.tokenizer.save_pretrained(save_dir)
 
-  def preprocess_input(self, featured_text: FeaturedPage) -> Tuple[List[str], np.ndarray]:
-    text_data = [fte['text'] for fte in featured_text]
-
-    numeric_features = [
-      [fte['size'], fte['flags'], fte['page']] + list(fte['bbox'])
-      for fte in featured_text
-    ]
-
-    normalized_features = self.scaler.fit_transform(numeric_features)
-
-    return text_data, normalized_features
-  
   def train_model(self, training_dataset_path: str, epochs=5, loss_limit=0.5):
       training_file_paths = ([training_dataset_path]
         if Path(training_dataset_path).is_file()
@@ -152,18 +156,20 @@ class TextClassifier:
 
       print('Training ... completed')
   
-  def classify_featured_text(self, featured_text: FeaturedPage) -> List[LabeledFeaturedBlock]:
-    text, numeric_features = self.preprocess_input(featured_text)
-    labels = self.predict(text, numeric_features)
-    
-    result: List[LabeledFeaturedBlock] = []
+  def classify_featured_book(self, featured_book: FeaturedBook) -> LabeledFeaturedBook:
+    labeled_featured_book = LabeledFeaturedBook()
+    for featured_page in featured_book:
+      labeled_featured_page = self.classify_featured_page(featured_page)
+      labeled_featured_book.append(labeled_featured_page)
+  
+    return labeled_featured_book
 
-    for i in range(len(text)):
-      result.append(LabeledFeaturedBlock(label=labels[i], text=text[i]))
-
-    return result
-
-
+  def classify_featured_page(self, featured_page: FeaturedPage) -> LabeledFeaturedPage:
+    text_by_block = self.__extract_text_from_featured_page(featured_page)
+    numeric_features_by_block = self.__extract_features_from_featured_page(featured_page)
+    labels = self.predict(text_by_block, numeric_features_by_block)
+    return LabeledFeaturedPage(featured_page, labels)
+     
   def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
     self.model.train()
     for epoch in range(epochs):
@@ -197,7 +203,7 @@ class TextClassifier:
       num_numeric_features: int = None,
       num_classes: int = None,
     ):
-    config = TextCategorizerModelConfig(
+    config = TextClassifierModelConfig(
       bert_model_name=bert_model_name,
       num_numeric_features=num_numeric_features,
       num_classes=num_classes,
@@ -206,3 +212,40 @@ class TextClassifier:
     self.model = TextClassifierModel(
       config=config
     )
+
+  def __extract_text_from_featured_page(self, featured_page: FeaturedPage) -> List[str]:
+    text_by_block: List[str] = []
+
+    for featured_block in featured_page:
+      text_from_block = self.__extract_text_from_featured_block(featured_block)
+      text_by_block.append(text_from_block)
+    
+    return text_by_block
+
+  def __extract_features_from_featured_page(self, featured_page: FeaturedPage) -> List[List[float]]:
+    features_by_block: List[List[float]] = []
+
+    for featured_block in featured_page:
+      features_from_block = self.__extract_features_from_featured_block(featured_block)
+      features_by_block.append(features_from_block)
+
+  @staticmethod
+  def __extract_text_from_featured_block(featured_block: FeaturedBlock) -> str:
+     return '\n'.join(featured_block.paragraphs)
+
+  @staticmethod
+  def __extract_features_from_featured_block(featured_block: FeaturedBlock) -> List[float]:
+     return [
+        featured_block.left_position,
+        featured_block.top_position,
+        featured_block.right_position,
+        featured_block.bottom_position,
+        featured_block.height,
+        featured_block.width,
+        featured_block.font_size,
+        featured_block.level,
+        featured_block.paragraphs_count,
+        featured_block.lines_count,
+        featured_block.words_count,
+      ]
+  

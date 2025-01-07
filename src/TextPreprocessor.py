@@ -1,6 +1,6 @@
-from sklearn.cluster import AgglomerativeClustering
-import numpy as np
-from typing import List, Dict, Iterator
+# from sklearn.cluster import AgglomerativeClustering
+# import numpy as np
+from typing import List
 
 from TextExtractor import FeaturedWord
 

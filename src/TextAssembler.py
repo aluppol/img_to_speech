@@ -1,7 +1,7 @@
 from typing import List, Generator
 import re
 
-from TextCategorizer import LabeledFeaturedBlock
+from TextClassifier import LabeledFeaturedBlock
 from LabelTransformer import Label
 
 
