@@ -6,14 +6,14 @@ import torch.nn as nn
 from typing import List
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
-import json
+import pickle
 
 from TextPreprocessor import FeaturedBlock, FeaturedPage, FeaturedBook
 from LabelTransformer import LabelTransformer, Label
 
 
 class LabeledFeaturedBlock(FeaturedBlock):
-    def __init__(self, featured_block: FeaturedBlock, label: str):
+    def __init__(self, featured_block: FeaturedBlock, label: int):
         self.__dict__.update(featured_block.__dict__)
         self.label = label
 
@@ -58,7 +58,7 @@ class TextClassifierModelConfig(PretrainedConfig):
         if not bert_model_name:
           bert_model_name = "bert-base-uncased"
         if not num_numeric_features:
-          num_numeric_features = 7
+          num_numeric_features = 11
         if not num_classes:
           num_classes = len(Label) + 1
 
@@ -227,8 +227,8 @@ class TextClassifier:
   def __load_training_datasets_from_paths(self, training_dataset_paths: List[str]) -> List[TrainingDataset]:
     traininig_datasets: List[TrainingDataset] = []
     for dataset_path in training_dataset_paths:
-      with open(dataset_path, 'r') as json_file:
-        training_labeled_featured_page: LabeledFeaturedPage = json.load(json_file)
+      with open(dataset_path, 'rb') as pickle_file:
+        training_labeled_featured_page: LabeledFeaturedPage = pickle.load(pickle_file)
       
       training_text = self.__extract_features_from_featured_page(training_labeled_featured_page)
       training_features = self.__extract_features_from_featured_page(training_labeled_featured_page)
@@ -259,7 +259,7 @@ class TextClassifier:
     
   @staticmethod
   def __load_path_to_each_training_dataset(loading_path: str) -> List[str]:
-    training_dataset_extention = '.json'
+    training_dataset_extention = '.pkl'
     file_paths = None
     if Path(loading_path).is_file():      
       file_paths = [loading_path]
