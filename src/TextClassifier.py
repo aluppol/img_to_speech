@@ -38,6 +38,14 @@ class LabeledFeaturedBook(List[LabeledFeaturedPage]):
         super().__init__(pages)
 
 
+class TrainingDataset:
+  def __init__(self, path: str, text_data: List[str], featured_data: List[List[float]], labels: List[int]):
+    self.path = path
+    self.text_data = text_data
+    self.featured_data = featured_data
+    self.labels = labels
+
+
 class TextClassifierModelConfig(PretrainedConfig):
     def __init__(
         self,
@@ -57,6 +65,7 @@ class TextClassifierModelConfig(PretrainedConfig):
         self.bert_model_name = bert_model_name
         self.num_numeric_features = num_numeric_features
         self.num_classes = num_classes
+
 
 class TextClassifierModel(PreTrainedModel):
   config_class = TextClassifierModelConfig
@@ -134,25 +143,18 @@ class TextClassifier:
     self.model.save_pretrained(save_dir)
     self.tokenizer.save_pretrained(save_dir)
 
-  def train_model(self, training_dataset_path: str, epochs=5, loss_limit=0.5):
-      training_file_paths = ([training_dataset_path]
-        if Path(training_dataset_path).is_file()
-        else [str(file) for file in Path(training_dataset_path).iterdir() if file.is_file() and file.suffix == '.json'])
-      label_transformer = LabelTransformer()
-      training_queue = [(-100, path) for path in sorted(training_file_paths)]
+  def train_model(self, training_datasets_path: str, epochs=5, loss_limit=0.5):
+      training_datasets_paths = self.__load_path_to_each_training_dataset(training_datasets_path)
+      loaded_training_datasets = self.__load_training_datasets_from_paths(training_datasets_paths)
+      training_queue = [(-100, dataset) for dataset in loaded_training_datasets]
       while len(training_queue) > 0:
-        last_loss, dataset_path = heapq.heappop(training_queue)
+        last_loss, training_dataset = heapq.heappop(training_queue)
         last_loss = -last_loss  # invert the sign from min heap to return to normal form
-        print(f'Dataset f{dataset_path} ... processing')
-        with open(dataset_path, 'r') as json_file:
-          training_dataset: List[LabeledFeaturedBlock] = json.load(json_file)
-        labels_str = [row["label"] for row in training_dataset]
-        labels = [label_transformer.to_int(label) for label in labels_str]
-        text_set, feature_set = self.preprocess_input(training_dataset)
-        loss = self.__train_model(text_set, feature_set, labels, epochs=epochs)
-        print(f'Dataset f{dataset_path} ... done ... from {last_loss} to {loss}')
+        print(f'Dataset f{training_dataset.path} ... processing')
+        loss = self.__train_model_with_dataset(training_dataset, epochs=epochs)
+        print(f'Dataset f{training_dataset.path} ... done ... from {last_loss} to {loss}')
         if loss > loss_limit:
-          heapq.heappush(training_queue, (-loss, dataset_path)) # invert sign to make min heap
+          heapq.heappush(training_queue, (-loss, training_dataset)) # invert sign to make min heap
 
       print('Training ... completed')
   
@@ -170,13 +172,13 @@ class TextClassifier:
     labels = self.predict(text_by_block, numeric_features_by_block)
     return LabeledFeaturedPage(featured_page, labels)
      
-  def __train_model(self, text_data: List[str], numeric_features: np.ndarray, labels: List[int], epochs=5):
+  def __train_model_with_dataset(self,training_dataset: TrainingDataset, epochs=5):
     self.model.train()
     for epoch in range(epochs):
       # Tokenize text data
-      encoded_text = self.tokenizer(text_data, return_tensors='pt', padding=True, truncation=True)
-      numeric_features_tensor = torch.tensor(numeric_features, dtype=torch.float32)
-      labels_tensor = torch.tensor(labels, dtype=torch.int64)
+      encoded_text = self.tokenizer(training_dataset.text_data, return_tensors='pt', padding=True, truncation=True)
+      numeric_features_tensor = torch.tensor(training_dataset.featured_data, dtype=torch.float32)
+      labels_tensor = torch.tensor(training_dataset.labels, dtype=torch.int64)
 
       # Forward pass
       outputs = self.model(encoded_text, numeric_features_tensor)
@@ -213,15 +215,6 @@ class TextClassifier:
       config=config
     )
 
-  def __extract_text_from_featured_page(self, featured_page: FeaturedPage) -> List[str]:
-    text_by_block: List[str] = []
-
-    for featured_block in featured_page:
-      text_from_block = self.__extract_text_from_featured_block(featured_block)
-      text_by_block.append(text_from_block)
-    
-    return text_by_block
-
   def __extract_features_from_featured_page(self, featured_page: FeaturedPage) -> List[List[float]]:
     features_by_block: List[List[float]] = []
 
@@ -229,9 +222,24 @@ class TextClassifier:
       features_from_block = self.__extract_features_from_featured_block(featured_block)
       features_by_block.append(features_from_block)
 
+    return features_by_block
+
+  def __load_training_datasets_from_paths(self, training_dataset_paths: List[str]) -> List[TrainingDataset]:
+    traininig_datasets: List[TrainingDataset] = []
+    for dataset_path in training_dataset_paths:
+      with open(dataset_path, 'r') as json_file:
+        training_labeled_featured_page: LabeledFeaturedPage = json.load(json_file)
+      
+      training_text = self.__extract_features_from_featured_page(training_labeled_featured_page)
+      training_features = self.__extract_features_from_featured_page(training_labeled_featured_page)
+      labels = self.__extract_lables_from_labled_featured_page(training_labeled_featured_page)
+
+      traininig_datasets.append(TrainingDataset(dataset_path, training_text, training_features, labels))
+    return traininig_datasets
+
   @staticmethod
-  def __extract_text_from_featured_block(featured_block: FeaturedBlock) -> str:
-     return '\n'.join(featured_block.paragraphs)
+  def __extract_text_from_featured_page(featured_page: FeaturedPage) -> List[str]:
+    return [featured_block.text for featured_block in featured_page]
 
   @staticmethod
   def __extract_features_from_featured_block(featured_block: FeaturedBlock) -> List[float]:
@@ -248,4 +256,22 @@ class TextClassifier:
         featured_block.lines_count,
         featured_block.words_count,
       ]
+    
+  @staticmethod
+  def __load_path_to_each_training_dataset(loading_path: str) -> List[str]:
+    training_dataset_extention = '.json'
+    file_paths = None
+    if Path(loading_path).is_file():      
+      file_paths = [loading_path]
+    else:
+      file_paths = [str(file) for file in Path(loading_path).iterdir() if file.is_file() and file.suffix == training_dataset_extention]
+      
+    return sorted(file_paths)
   
+  @staticmethod
+  def __extract_lables_from_labled_featured_page(labeled_featured_page: LabeledFeaturedPage) -> List[int]:
+    lable_transformer = LabelTransformer()
+    labels: List[int] = []
+    for labeled_feautred_block in labeled_featured_page:
+      labels.append(lable_transformer.to_int(labeled_feautred_block.label))
+    return labels

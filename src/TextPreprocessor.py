@@ -28,6 +28,10 @@ class FeaturedBlock:
         self.paragraphs = self.__extract_paragraphs(featured_words)
         self.paragraphs_count = len(self.paragraphs)
 
+    @property
+    def text(self) -> str:
+      return '\n'.join(self.paragraphs)
+    
     @staticmethod
     def __extract_paragraphs(featured_words: List[FeaturedWord]) -> List[str]:
         paragraphs = {}
@@ -41,7 +45,7 @@ class FeaturedBlock:
         return list(paragraphs.values())
     
     def __str__(self) -> str:
-        paragraphs_text = '\n'.join(self.paragraphs)
+        paragraphs_text = self.text
         return (
             f'Level: {self.level}\n'
             f'Font Size: {self.font_size}\n'
