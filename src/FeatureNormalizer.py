@@ -7,7 +7,7 @@ from functools import singledispatchmethod
 from TextPreprocessor import FeaturedBlock, FeaturedPage, FeaturedBook
 
 
-class BookFeatureNormalizerManager():
+class BooksFeatureNormalizersManager():
     class BookFeatureNormalizer():
         def __init__(self):
             self.min_font_size = float('inf')
@@ -146,32 +146,38 @@ class BookFeatureNormalizerManager():
             return (property_value - min_value) / (max_value - min_value)
         
 
-    def __init__(self, book_title: str, featured_book: FeaturedBook, dir_path_to_normalizers='statics/feature_normalizers'):
-        self.book_title = book_title
+    def __init__(self, dir_path_to_normalizers='statics/feature_normalizers'):
         self.dir_path_to_normalizers = dir_path_to_normalizers
 
-        if self.__is_normalizer_for_book_exists():
-            self.normalizer: BookFeatureNormalizerManager.BookFeatureNormalizer = self.load_normalizer_for_book()
-        else:
-            self.initiate_normalizer(featured_book)
+    def load_or_init_normalizer(self, book_title: str, featured_book: FeaturedBook) -> BookFeatureNormalizer:
+        try:
+            self.load_normalizer_for_book(book_title)
+        except:
+            normalizer = self.initiate_and_save_normalizer(book_title, featured_book)
+            return normalizer
     
-    def initiate_normalizer(self, featured_book: FeaturedBook):
-        self.normalizer = self.BookFeatureNormalizer()
-        self.train_normalizer_with_preprocessed_book(featured_book)
-        self.save_feature_normalizer_for_book()
+    def initiate_and_save_normalizer(self, book_title: str, featured_book: FeaturedBook):
+        normalizer = self.BookFeatureNormalizer()
+        self.__train_normalizer_with_preprocessed_book(featured_book)
+        self.__save_feature_normalizer_for_book(book_title, normalizer)
+        return normalizer
 
-    def train_normalizer_with_preprocessed_book(self, featured_book: FeaturedBook) -> None:
+    def load_normalizer_for_book(self,  book_title: str) -> BookFeatureNormalizer:
+        normalizer_path = f'{self.dir_path_to_normalizers}/{book_title}.pkl'
+        if self.__is_normalizer_for_book_exists(normalizer_path):
+            with open(normalizer_path, 'rb') as file:
+                return pickle.load(file)
+        else:
+            raise FileNotFoundError(f'No normalizer at "{normalizer_path}" found')
+
+    def __train_normalizer_with_preprocessed_book(self, featured_book: FeaturedBook) -> None:
         self.normalizer.train(featured_book)
 
-    def save_feature_normalizer_for_book(self) -> None:
-        with open(f'{self.dir_path_to_normalizers}/{self.book_title}.pkl', 'wb') as file:
-            pickle.dump(self.normalizer, file)
+    def __save_feature_normalizer_for_book(self, book_title: str, normalizer: BookFeatureNormalizer) -> None:
+        with open(f'{self.dir_path_to_normalizers}/{book_title}.pkl', 'wb') as file:
+            pickle.dump(normalizer, file)
 
-    def load_normalizer_for_book(self) -> None:
-        with open(f"{self.dir_path_to_normalizers}/{self.book_title}.pkl", 'rb') as file:
-            return pickle.load(file)
-        
-    def __is_normalizer_for_book_exists(self) -> bool:
-        path = Path(f'{self.dir_path_to_normalizers}/{self.book_title}.pkl')
+    def __is_normalizer_for_book_exists(self, book_title: str) -> bool:
+        path = Path(f'{self.dir_path_to_normalizers}/{book_title}.pkl')
         return path.exists() and path.is_file()
     

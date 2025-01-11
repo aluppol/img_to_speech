@@ -95,7 +95,7 @@ class TextExtractor(ABC):
         if not path.is_file():
             raise IsADirectoryError(f"Path is not a file: {file_path}")
         if expected_extensions and path.suffix.lower() not in expected_extensions:
-            raise ValueError(f'Unsupported file extention: "{path.suffix}". Expected extensions: {expected_extensions}')
+            raise ValueError(f'Unsupported file extension: "{path.suffix}". Expected extensions: {expected_extensions}')
         return path
 
     @abstractmethod
