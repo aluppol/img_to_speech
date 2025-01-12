@@ -44,3 +44,6 @@ class LabelTransformer:
         if index not in self.int_to_label:
             raise ValueError(f"Index '{index}' not recognized.")
         return self.int_to_label[index]
+    
+    
+label_transformer = LabelTransformer()

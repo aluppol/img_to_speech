@@ -48,6 +48,7 @@
 - `pymupdf` for PDF text extraction
 - `transformers` for BERT-based classification
 - `torch` for deep learning workflows
+- 'poppler' for pdf processing
 - Additional dependencies listed in `requirements.txt`.
 
 ### Steps to Run

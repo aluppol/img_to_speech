@@ -1,12 +1,11 @@
 from typing import List
-import pickle
 import traceback
 from pathlib import Path
 
 from TextExtractor import PdfTextExtractor
 from TextPreprocessor import TextPreprocessor, FeaturedBook
 from TextClassifier import LabeledFeaturedBlock, TextClassifier
-from LabelTransformer import LabelTransformer
+
 from TextAssembler import TextAssembler
 from TextVocalizer import TextToSpeech, TextToSpeechPipeline
 from FeatureNormalizer import BooksFeatureNormalizersManager
@@ -15,26 +14,8 @@ from utils import get_file_name_from_path
 
 class PdfToWavConverter:
     def __init__(self, text_classifier_model_path='src/models/img_to_speech-book_text_classifier_model'):
-        self.__text_classifier = TextClassifier(text_classifier_model_path)
-
-    def generate_training_data(self, pdf_path: str, path_with_no_extension: str):
-        label_transformer = LabelTransformer()
-        text_extractor = PdfTextExtractor()
-        text_preprocessor = TextPreprocessor()
-        books_feature_normalizers_manager = BooksFeatureNormalizersManager()
-
-        featured_words_page = next(text_extractor.extract(pdf_path))
-        featured_page = text_preprocessor.preprocess_page(featured_words_page)
-        feature_normalizer = books_feature_normalizers_manager.load_normalizer_for_book('roadto')
-        normalized_featured_page = feature_normalizer.normalize(featured_page)
-            
-        labeled_normalized_featured_page = self.__text_classifier.classify_featured_page(normalized_featured_page)
-    
-        for labeled_normalized_featured_block in labeled_normalized_featured_page:
-            print(labeled_normalized_featured_block)
-            labeled_normalized_featured_block.label = str(label_transformer.to_str(labeled_normalized_featured_block.label)).split('.')[1]
-
-        self.save_training_data(labeled_normalized_featured_page, path_with_no_extension)
+        # self.__text_classifier = TextClassifier(text_classifier_model_path)
+        pass
 
     def train_text_classifier(self, training_data_dir: str, model_dir: str, epochs=5, loss_limit=0.5):
         text_classifier = TextClassifier(model_dir)
@@ -43,14 +24,6 @@ class PdfToWavConverter:
         if not text_classifier.model_dir.exists():
             text_classifier.model_dir.mkdir()
         text_classifier.save_model(text_classifier.model_dir)
-
-    def save_training_data(self, data: List[LabeledFeaturedBlock], file_path: str):
-        self.save_to_pkl(data, file_path)
-    
-    @staticmethod
-    def save_to_pkl(data, path_with_no_ext: str):
-        with open(f'{path_with_no_ext}.pkl', 'wb') as f:
-            pickle.dump(data, f)
 
     def pdf_to_voice_pipeline(self, pdf_file_path: str, mp3_folder_path: str):
         text_extractor = PdfTextExtractor()

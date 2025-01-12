@@ -147,7 +147,7 @@ class BooksFeatureNormalizersManager():
         
 
     def __init__(self, dir_path_to_normalizers='statics/feature_normalizers'):
-        self.dir_path_to_normalizers = dir_path_to_normalizers
+        self.__dir_path_to_normalizers = dir_path_to_normalizers
 
     def load_or_init_normalizer(self, book_title: str, featured_book: FeaturedBook) -> BookFeatureNormalizer:
         try:
@@ -158,26 +158,27 @@ class BooksFeatureNormalizersManager():
     
     def initiate_and_save_normalizer(self, book_title: str, featured_book: FeaturedBook):
         normalizer = self.BookFeatureNormalizer()
-        self.__train_normalizer_with_preprocessed_book(featured_book)
+        self.__train_normalizer_with_preprocessed_book(featured_book, normalizer)
         self.__save_feature_normalizer_for_book(book_title, normalizer)
         return normalizer
 
     def load_normalizer_for_book(self,  book_title: str) -> BookFeatureNormalizer:
-        normalizer_path = f'{self.dir_path_to_normalizers}/{book_title}.pkl'
+        normalizer_path = f'{self.__dir_path_to_normalizers}/{book_title}.pkl'
         if self.__is_normalizer_for_book_exists(normalizer_path):
             with open(normalizer_path, 'rb') as file:
                 return pickle.load(file)
         else:
             raise FileNotFoundError(f'No normalizer at "{normalizer_path}" found')
 
-    def __train_normalizer_with_preprocessed_book(self, featured_book: FeaturedBook) -> None:
-        self.normalizer.train(featured_book)
+    def __train_normalizer_with_preprocessed_book(self, featured_book: FeaturedBook, normalizer: BookFeatureNormalizer) -> None:
+        normalizer.train(featured_book)
 
     def __save_feature_normalizer_for_book(self, book_title: str, normalizer: BookFeatureNormalizer) -> None:
-        with open(f'{self.dir_path_to_normalizers}/{book_title}.pkl', 'wb') as file:
+        with open(f'{self.__dir_path_to_normalizers}/{book_title}.pkl', 'wb') as file:
             pickle.dump(normalizer, file)
 
-    def __is_normalizer_for_book_exists(self, book_title: str) -> bool:
-        path = Path(f'{self.dir_path_to_normalizers}/{book_title}.pkl')
+    @staticmethod
+    def __is_normalizer_for_book_exists(normalizer_path: str) -> bool:
+        path = Path(normalizer_path)
         return path.exists() and path.is_file()
     

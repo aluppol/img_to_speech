@@ -9,7 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 import pickle
 
 from TextPreprocessor import FeaturedBlock, FeaturedPage, FeaturedBook
-from LabelTransformer import LabelTransformer, Label
+from LabelTransformer import label_transformer, Label
 
 
 class LabeledFeaturedBlock(FeaturedBlock):
@@ -100,7 +100,8 @@ class TextClassifierModel(PreTrainedModel):
 class TextClassifier:
   def __init__(
       self,
-      model_dir: str,
+      model_dir='src/models/img_to_speech-book_text_classifier_model',
+      model_repo='aluppol/img_to_speech-book_text_classifier',
       bert_model_name: str = None,
       num_numeric_features: int = None,
       num_classes: int = None,
@@ -137,11 +138,11 @@ class TextClassifier:
       prediction = self.model(encoded_text, numeric_features_tensor)
       return torch.argmax(prediction, dim=1).tolist()
     
-  def save_model(self, save_dir: Path):
-    if not save_dir.exists():
-      save_dir.mkdir(parents=True, exist_ok=True)
-    self.model.save_pretrained(save_dir)
-    self.tokenizer.save_pretrained(save_dir)
+  def save_model(self):
+    if not self.model_dir.exists():
+      self.model_dir.mkdir(parents=True, exist_ok=True)
+    self.model.save_pretrained(self.model_dir)
+    self.tokenizer.save_pretrained(self.model_dir)
 
   def train_model(self, training_datasets_path: str, epochs=5, loss_limit=0.5):
       training_datasets_paths = self.__load_path_to_each_training_dataset(training_datasets_path)
@@ -270,8 +271,7 @@ class TextClassifier:
   
   @staticmethod
   def __extract_lables_from_labled_featured_page(labeled_featured_page: LabeledFeaturedPage) -> List[int]:
-    lable_transformer = LabelTransformer()
     labels: List[int] = []
-    for labeled_feautred_block in labeled_featured_page:
-      labels.append(lable_transformer.to_int(labeled_feautred_block.label))
+    for labeled_featured_block in labeled_featured_page:
+      labels.append(label_transformer.to_int(labeled_featured_block.label))
     return labels

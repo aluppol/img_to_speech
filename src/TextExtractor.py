@@ -2,10 +2,11 @@ import pytesseract
 from PIL import Image
 from pathlib import Path
 from typing import Optional, Set, Dict, Any, List, Generator
-from pdf2image import convert_from_path
+from pdf2image import convert_from_path, convert_from_bytes
 from abc import ABC, abstractmethod
 import cv2
 import numpy as np
+from functools import singledispatchmethod
 
 
 class FeaturedWord():
@@ -104,8 +105,19 @@ class TextExtractor(ABC):
 
 
 class PdfTextExtractor(TextExtractor):
-    def extract(self, pdf_file_path: str) -> Generator[List[FeaturedWord], None, None]:
+    @singledispatchmethod
+    def extract(self, pdf_file: Any) -> Generator[List[FeaturedWord], None, None]:
+        raise TypeError(f'Unsupported type "{type(pdf_file)}" for text extraction') 
+
+    @extract.register
+    def _(self, pdf_file_path: str) -> Generator[List[FeaturedWord], None, None]:
         for page_image in self.__extract_page_images_from_pdf_path(pdf_file_path):
+            yield self.__extract_featured_text_from_image(page_image)
+
+
+    @extract.register
+    def _(self, pdf_file_bytes: bytes) -> Generator[List[FeaturedWord], None, None]:
+        for page_image in convert_from_bytes(pdf_file_bytes, dpi=300):
             yield self.__extract_featured_text_from_image(page_image)
 
     def __extract_page_images_from_pdf_path(self, pdf_file_path: str) -> List[Image.Image]:

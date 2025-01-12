@@ -1,0 +1,51 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.24334600760456274,
+        "top_position": 0.24157119476268413,
+        "font_size": 0.17073170731707318,
+        "level": 0,
+        "width": 0.44562737642585554,
+        "height": 0.01702127659574468,
+        "right_position": 0.6889733840304183,
+        "bottom_position": 0.25859247135842883,
+        "paragraphs": [
+            "INTRODUCTION"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.06060606060606061,
+        "words_count": 0.035897435897435895,
+        "left_position": 0.10646387832699619,
+        "top_position": 0.31063829787234043,
+        "font_size": 0.05853658536585366,
+        "level": 0,
+        "width": 0.7193916349809886,
+        "height": 0.03960720130932897,
+        "right_position": 0.8258555133079848,
+        "bottom_position": 0.3502454991816694,
+        "paragraphs": [
+            "Few discoveries are more irritating than those which expose the pedigree of ideas. Lord Acton."
+        ],
+        "label": "EPIGRAPH"
+    },
+    {
+        "lines_count": 0.030303030303030304,
+        "words_count": 0.4025641025641026,
+        "left_position": 0.030418250950570342,
+        "top_position": 0.3901800327332242,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.8760456273764259,
+        "height": 0.24451718494271685,
+        "right_position": 0.9064638783269962,
+        "bottom_position": 0.6346972176759411,
+        "paragraphs": [
+            "Contemporary events differ from history in that we do not know the results they will produce. Looking back, we can assess the significance of past occurrences and trace the consequences they have brought in their train. But while history runs its course, it is not history to us. It leads us into an unknown land and but rarely can we get a glimpse of what lies ahead. It would be different if it were given to us to live a second time through the same events with all the knowledge of what we have seen before. How differ- ent would things appear to us, how important and often alarm- ing would changes seem that we now scarcely notice! It is probably fortunate that man can never have this experience and knows of no laws which history must obey.",
+            "Yet, although history never quite repeats itself; and just because no development is inevitable, we can in a measure learn"
+        ],
+        "label": "CHAPTER_TEXT"
+    }
+]
