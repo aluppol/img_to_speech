@@ -10,13 +10,15 @@ from TrainingDataGenerator import TrainingLabeledFeaturedPage
 
 
 class TrainingDataset:
-  def __init__(self, path: str, text_data: List[str], featured_data: List[List[float]], labels: List[int]):
-    self.path = path
-    self.text_data = text_data
-    self.featured_data = featured_data
-    self.labels = labels
+    def __init__(self, path: str, text_data: List[str], featured_data: List[List[float]], labels: List[int]):
+        self.path = path
+        self.text_data = text_data
+        self.featured_data = featured_data
+        self.labels = labels
 
-
+    def __lt__(self, other):
+        return self.path < other.path
+    
 class TextClassifierTrainer:
     def __init__(self, training_data_dir: str):
         self.__training_data_dir = training_data_dir
@@ -32,6 +34,7 @@ class TextClassifierTrainer:
       training_datasets_paths = self.__load_path_to_each_training_dataset(training_datasets_path)
       loaded_training_datasets = self.__load_training_datasets_from_paths(training_datasets_paths)
       training_queue = [(-100, dataset) for dataset in loaded_training_datasets]
+      heapq.heapify(training_queue)
       while len(training_queue) > 0:
         last_loss, training_dataset = heapq.heappop(training_queue)
         last_loss = -last_loss  # invert the sign from min heap to return to normal form
@@ -70,11 +73,11 @@ class TextClassifierTrainer:
             with open(dataset_path, 'r') as file:
                 training_labeled_featured_page = TrainingLabeledFeaturedPage(json.load(file))
         
-        training_text = self.__text_classifier.extract_text_from_featured_page(training_labeled_featured_page)
-        training_features = self.__text_classifier.extract_features_from_featured_page(training_labeled_featured_page)
-        labels = self.__extract_lables_from_labled_featured_page(training_labeled_featured_page)
+            training_text = self.__text_classifier.extract_text_from_featured_page(training_labeled_featured_page)
+            training_features = self.__text_classifier.extract_features_from_featured_page(training_labeled_featured_page)
+            labels = self.__extract_lables_from_labled_featured_page(training_labeled_featured_page)
 
-        traininig_datasets.append(TrainingDataset(dataset_path, training_text, training_features, labels))
+            traininig_datasets.append(TrainingDataset(dataset_path, training_text, training_features, labels))
         return traininig_datasets
 
     @staticmethod
