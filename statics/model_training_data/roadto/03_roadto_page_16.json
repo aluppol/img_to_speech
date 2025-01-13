@@ -1,0 +1,51 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.007692307692307693,
+        "left_position": 0.08669201520912548,
+        "top_position": 0.011456628477905073,
+        "font_size": 0.014634146341463415,
+        "level": 0,
+        "width": 0.2980988593155893,
+        "height": 0.006873977086743044,
+        "right_position": 0.38479087452471483,
+        "bottom_position": 0.018330605564648116,
+        "paragraphs": [
+            "THE ROAD TO SERFDOM"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.6060606060606061,
+        "words_count": 0.6025641025641025,
+        "left_position": 0.08593155893536121,
+        "top_position": 0.0369885433715221,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.870722433460076,
+        "height": 0.40589198036006546,
+        "right_position": 0.9566539923954372,
+        "bottom_position": 0.44288052373158754,
+        "paragraphs": [
+            "become the excuse for forcing on us the very institutions which have produced that wickedness.",
+            "The interpretation of the developments in Germany and Italy about to be proffered in this book is very different from that given by most foreign observers and by the majority of exiles from those countries. But if this interpretation is correct, it will also explain why it is almost impossible for a person who, like most of the exiles and the foreign correspondents of English and American newspapers, holds the now prevalent socialist views, to see those events in the proper perspective.\u2019 The superficial and misleading view, which sees in National-Socialism merely a reac- tion fomented by those whose privileges or interests were threatened by the advance of socialism, was naturally supported by all those who, although they were at one time active in the movement of ideas that has led to National-Socialism, have stopped at some point of that development and, by the conflict into which this brought them with the Nazis, were forced to leave their country. But the fact that they were numerically the only significant opposition to the Nazis means no more than that in the wider sense practically all Germans had become socialists, and that liberalism in the old sense had been driven out by socialism. As we hope to show, the conflict in existence between the National-Socialist \u201cRight\u201d and the \u201cLeft\u201d in Germany is the"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.30303030303030304,
+        "words_count": 0.35128205128205126,
+        "left_position": 0.08669201520912548,
+        "top_position": 0.47528641571194763,
+        "font_size": 0.04390243902439024,
+        "level": 0,
+        "width": 0.8722433460076046,
+        "height": 0.16268412438625204,
+        "right_position": 0.9589353612167301,
+        "bottom_position": 0.6379705400981996,
+        "paragraphs": [
+            "' How thoroughly the views held in all quarters, even the most conservative, of a whole country can be coloured by the predominant Left bias of the foreign correspondents of its Press, is well illustrated by the views almost universally held in America about the relations between Great Britain and India. The Englishman who wishes to see events on the European Continent in the proper perspective must seriously consider the possibility that his views may have been distorted in precisely the same manner, and for the same reasons. This is in no way meant to reflect on the sincerity of the views of American and English foreign correspondents. But anyone who knows the kind of native circles with which foreign correspondents are likely to have close contacts, will have no difficulty in understanding the sources of this bias."
+        ],
+        "label": "ANNOTATION"
+    }
+]

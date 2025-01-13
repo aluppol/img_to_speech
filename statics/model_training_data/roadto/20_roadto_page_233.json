@@ -1,0 +1,68 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.417490494296578,
+        "top_position": 0.16497545008183306,
+        "font_size": 0.4682926829268293,
+        "level": 0,
+        "width": 0.11178707224334601,
+        "height": 0.0369885433715221,
+        "right_position": 0.529277566539924,
+        "bottom_position": 0.20196399345335517,
+        "paragraphs": [
+            "15"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.030303030303030304,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.13840304182509505,
+        "top_position": 0.23797054009819968,
+        "font_size": 0.17073170731707318,
+        "level": 0,
+        "width": 0.6737642585551331,
+        "height": 0.04451718494271686,
+        "right_position": 0.8121673003802281,
+        "bottom_position": 0.2824877250409165,
+        "paragraphs": [
+            "THE PROSPECTS OF INTERNATIONAL ORDER"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.14102564102564102,
+        "left_position": 0.11406844106463879,
+        "top_position": 0.3335515548281506,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.7224334600760456,
+        "height": 0.09983633387888707,
+        "right_position": 0.8365019011406845,
+        "bottom_position": 0.43338788870703765,
+        "paragraphs": [
+            "Of all checks on democracy, federation has been the most efficacious and the most congenial.... The federal system limits and restrains the sovereign power by dividing it and by assigning to Government only certain defined rights. It is the only method of curbing not only the majority but the power of the whole people.",
+            "Lord Acton."
+        ],
+        "label": "EPIGRAPH"
+    },
+    {
+        "lines_count": 0.06060606060606061,
+        "words_count": 0.2692307692307692,
+        "left_position": 0.03802281368821293,
+        "top_position": 0.45793780687397706,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8752851711026616,
+        "height": 0.1734860883797054,
+        "right_position": 0.9133079847908745,
+        "bottom_position": 0.6314238952536825,
+        "paragraphs": [
+            "In no other field has the world yet paid so dearly for the aban- donment of nineteenth-century liberalism as in the field where the retreat began: in international relations. Yet only a small part of the lesson which experience ought to have taught us has been learnt. Perhaps even more than elsewhere current notions of what is desirable and practicable are here still of a kind which may well produce the opposite of what they promise.",
+            "The part of the lesson of the recent past which is slowly and gradually being appreciated is that many kinds of economic planning, conducted independently on a national scale, are"
+        ],
+        "label": "CHAPTER_TEXT"
+    }
+]

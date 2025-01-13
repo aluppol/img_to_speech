@@ -1,0 +1,67 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.4159695817490494,
+        "top_position": 0.16988543371522094,
+        "font_size": 0.4585365853658537,
+        "level": 0,
+        "width": 0.09885931558935361,
+        "height": 0.036333878887070375,
+        "right_position": 0.5148288973384031,
+        "bottom_position": 0.20621931260229132,
+        "paragraphs": [
+            "1]"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.007692307692307693,
+        "left_position": 0.19315589353612167,
+        "top_position": 0.24320785597381342,
+        "font_size": 0.16585365853658537,
+        "level": 0,
+        "width": 0.5513307984790875,
+        "height": 0.01702127659574468,
+        "right_position": 0.7444866920152091,
+        "bottom_position": 0.2602291325695581,
+        "paragraphs": [
+            "THE END OF TRUTH"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.05384615384615385,
+        "left_position": 0.11178707224334601,
+        "top_position": 0.3119476268412439,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.7224334600760456,
+        "height": 0.05531914893617021,
+        "right_position": 0.8342205323193916,
+        "bottom_position": 0.36726677577741407,
+        "paragraphs": [
+            "It is significant that the nationalisation of thought has pro- ceeded everywhere pari passu with the nationalisation of industry.",
+            "E. H. Carr."
+        ],
+        "label": "EPIGRAPH"
+    },
+    {
+        "lines_count": 0.3939393939393939,
+        "words_count": 0.3717948717948718,
+        "left_position": 0.0349809885931559,
+        "top_position": 0.3911620294599018,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.8714828897338402,
+        "height": 0.24517184942716858,
+        "right_position": 0.9064638783269962,
+        "bottom_position": 0.6363338788870704,
+        "paragraphs": [
+            "The most effective way of making everybody serve the single system of ends towards which the social plan is directed is to make everybody believe in those ends. To make a totalitarian system function efficiently it is not enough that everybody should be forced to work for the same ends. It is essential that the people should come to regard them as their own ends. Although the beliefs must be chosen for the people and imposed upon them, they must become their beliefs, a generally accepted creed which makes the individuals as far as possible act spon- taneously in the way the planner wants. If the feeling of oppres- sion in totalitarian countries is in general much less acute than most people in liberal countries imagine, this is because the totalitarian governments succeed to a high degree in making people think as they want them to."
+        ],
+        "label": "CHAPTER_TEXT"
+    }
+]

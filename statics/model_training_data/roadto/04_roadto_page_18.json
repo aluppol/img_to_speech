@@ -1,0 +1,67 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.4935361216730038,
+        "top_position": 0.17152209492635023,
+        "font_size": 0.4585365853658537,
+        "level": 0,
+        "width": 0.03574144486692015,
+        "height": 0.036333878887070375,
+        "right_position": 0.529277566539924,
+        "bottom_position": 0.2078559738134206,
+        "paragraphs": [
+            "7"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.005128205128205128,
+        "left_position": 0.1779467680608365,
+        "top_position": 0.2448445171849427,
+        "font_size": 0.16585365853658537,
+        "level": 0,
+        "width": 0.6775665399239543,
+        "height": 0.01702127659574468,
+        "right_position": 0.8555133079847909,
+        "bottom_position": 0.2618657937806874,
+        "paragraphs": [
+            "THE ABANDONED ROAD"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.07692307692307693,
+        "left_position": 0.15817490494296577,
+        "top_position": 0.3142389525368249,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.7216730038022814,
+        "height": 0.05499181669394435,
+        "right_position": 0.8798479087452471,
+        "bottom_position": 0.36923076923076925,
+        "paragraphs": [
+            "A programme whose basic thesis is, not that the system of free enterprise for profit has failed in this generation, but that it has not yet been tried.",
+            "F. D. Roosevelt."
+        ],
+        "label": "EPIGRAPH"
+    },
+    {
+        "lines_count": 0.3939393939393939,
+        "words_count": 0.3923076923076923,
+        "left_position": 0.08212927756653993,
+        "top_position": 0.3934533551554828,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.870722433460076,
+        "height": 0.2448445171849427,
+        "right_position": 0.9528517110266159,
+        "bottom_position": 0.6382978723404256,
+        "paragraphs": [
+            "When the course of civilisation takes an unexpected turn, when instead of the continuous progress which we have come to expect, we find ourselves threatened by evils associated by us with past ages of barbarism, we blame naturally anything but ourselves, Have we not all striven according to our best lights, and have not many of our finest minds incessantly worked to make this a better world? Have not all our efforts and hopes been directed towards greater freedom, justice, and prosperity? If the outcome is so different from our aims, if, instead of freedom and prosperity, bondage and misery stare us in the face, is it not clear that sinister forces must have foiled our intentions, that we are the victims of some evil power which must be conquered before we can resume the road to better things? However much we may differ when we name the culprit, whether it is the wicked"
+        ],
+        "label": "CHAPTER_TEXT"
+    }
+]

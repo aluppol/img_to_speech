@@ -1,0 +1,66 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.4114068441064639,
+        "top_position": 0.16726677577741408,
+        "font_size": 0.4634146341463415,
+        "level": 0,
+        "width": 0.11330798479087452,
+        "height": 0.03666121112929623,
+        "right_position": 0.5247148288973384,
+        "bottom_position": 0.20392798690671032,
+        "paragraphs": [
+            "12"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.030303030303030304,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.1482889733840304,
+        "top_position": 0.2402618657937807,
+        "font_size": 0.17073170731707318,
+        "level": 0,
+        "width": 0.6334600760456274,
+        "height": 0.04451718494271686,
+        "right_position": 0.7817490494296578,
+        "bottom_position": 0.28477905073649756,
+        "paragraphs": [
+            "THE SOCIALIST ROOTS OF NAZISM"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.06060606060606061,
+        "words_count": 0.035897435897435895,
+        "left_position": 0.10570342205323194,
+        "top_position": 0.33682487725040916,
+        "font_size": 0.05853658536585366,
+        "level": 0,
+        "width": 0.7178707224334601,
+        "height": 0.03993453355155483,
+        "right_position": 0.823574144486692,
+        "bottom_position": 0.376759410801964,
+        "paragraphs": [
+            "All anti-liberal forces are combining against everything that is liberal. A. Moeller van den Bruck."
+        ],
+        "label": "EPIGRAPH"
+    },
+    {
+        "lines_count": 0.36363636363636365,
+        "words_count": 0.33589743589743587,
+        "left_position": 0.029657794676806085,
+        "top_position": 0.4072013093289689,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8714828897338402,
+        "height": 0.22585924713584288,
+        "right_position": 0.9011406844106464,
+        "bottom_position": 0.6330605564648117,
+        "paragraphs": [
+            "It is a common mistake to regard National-Socialism as a mere revolt against reason, an irrational movement without intel- lectual background. If that were so, the movement would be much less dangerous than it is. But nothing could be further from the truth or more misleading. The doctrines of National- Socialism are the culmination of a long evolution of thought, a process in which thinkers who have had great influence far beyond the confines of Germany have taken part. Whatever one may think of the premises from which they started, it cannot be denied that the men who produced the new doctrines were powerful writers who left the impress of their ideas on the whole of European thought. Their system was developed with ruthless consistency. Once one accepts the premises from which"
+        ],
+        "label": "CHAPTER_TEXT"
+    }
+]

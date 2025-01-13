@@ -1,0 +1,51 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.002564102564102564,
+        "left_position": 0.26159695817490497,
+        "top_position": 0.19181669394435352,
+        "font_size": 0.11707317073170732,
+        "level": 0,
+        "width": 0.43650190114068443,
+        "height": 0.014075286415711947,
+        "right_position": 0.6980988593155893,
+        "bottom_position": 0.20589198036006548,
+        "paragraphs": [
+            "BIBLIOGRAPHICAL NOTE"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.45454545454545453,
+        "words_count": 0.48717948717948717,
+        "left_position": 0.04106463878326996,
+        "top_position": 0.3181669394435352,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.8722433460076046,
+        "height": 0.2392798690671031,
+        "right_position": 0.9133079847908745,
+        "bottom_position": 0.5574468085106383,
+        "paragraphs": [
+            "The exposition of a point of view which for many years has been decidedly out of favour suffers from the difficulty that, within the compass of a few chapters, it is not possible to discuss more than some aspects of it. For the reader whose outlook has been formed entirely by the views that have been dominant during the last twenty years this will scarcely be sufficient to provide the common ground required for profitable discussion. But although unfashionable, the views of the author of the present book are not so singular as they may appear to some readers. His basic outlook is the same as that of a steadily growing number of writers in many countries whose studies have led them independently to similar conclusions. The reader who would like to acquaint himself further with what he may have found an unfamiliar but not uncongenial climate of opinion, may find useful the following list of some of the more important works of this kind, including several in which the essentially critical character of the present essay is supplemented by a fuller discussion of the structure of a desirable future society."
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.030303030303030304,
+        "words_count": 0.05897435897435897,
+        "left_position": 0.04182509505703422,
+        "top_position": 0.5754500818330606,
+        "font_size": 0.05853658536585366,
+        "level": 0,
+        "width": 0.870722433460076,
+        "height": 0.05662847790507365,
+        "right_position": 0.9125475285171103,
+        "bottom_position": 0.6320785597381342,
+        "paragraphs": [
+            "W. H. Chamberlin. A False Utopia. Collectivism in Theory and Practice. (Duckworth) 1937.",
+            "F.D. Graham. Social Goals and Economic Institutions, (Princeton University Press) 1942."
+        ],
+        "label": "ANNOTATION"
+    }
+]

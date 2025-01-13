@@ -1,0 +1,83 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.005128205128205128,
+        "left_position": 0.5893536121673004,
+        "top_position": 0.010801963993453356,
+        "font_size": 0.014634146341463415,
+        "level": 0,
+        "width": 0.29885931558935364,
+        "height": 0.006873977086743044,
+        "right_position": 0.888212927756654,
+        "bottom_position": 0.0176759410801964,
+        "paragraphs": [
+            "THE ABANDONED ROAD"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.3333333333333333,
+        "words_count": 0.6641025641025641,
+        "left_position": 0.016730038022813688,
+        "top_position": 0.03666121112929623,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.8775665399239544,
+        "height": 0.4569558101472995,
+        "right_position": 0.8942965779467681,
+        "bottom_position": 0.49361702127659574,
+        "paragraphs": [
+            "ranges of desire. And while the rising standard soon led to the discovery of very dark spots in society, spots which men were no longer willing to tolerate, there was probably no class that did not substantially benefit from the general advance. We cannot do justice to this astonishing growth if we measure it by our present standards, which themselves result from this growth and now make many defects obvious. To appreciate what it meant to those who took part in it we must measure it by the hopes and wishes men held when it began: and there can be no doubt that its success surpassed man\u2019s wildest dreams, that by the beginning of the twentieth century the working man in the Western world had reached a degree of material comfort, security, and personal independence which a hundred years before had seemed scarcely possible.",
+            "What in the future will probably appear the most significant and far-reaching effect of this success is the new sense of power over their own fate, the belief in the unbounded possibilities of improving their own lot, which the success already achieved created among men. With the success grew ambition\u2014and man had every right to be ambitious. What had been an inspiring promise seemed no longer enough, the rate of progress far too slow; and the principles which had made this progress possible in the past came to be regarded more as obstacles to speedier progress, impatiently to be brushed away, than as the conditions for the preservation and development of what had already been achieved."
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.24106463878326997,
+        "top_position": 0.5099836333878887,
+        "font_size": 0.00975609756097561,
+        "level": 0,
+        "width": 0.42737642585551333,
+        "height": 0.006546644844517185,
+        "right_position": 0.6684410646387833,
+        "bottom_position": 0.5165302782324059,
+        "paragraphs": [
+            "* * * * *"
+        ],
+        "label": "OTHER"
+    },
+    {
+        "lines_count": 0.15151515151515152,
+        "words_count": 0.16923076923076924,
+        "left_position": 0.019011406844106463,
+        "top_position": 0.5364975450081833,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.8722433460076046,
+        "height": 0.10180032733224223,
+        "right_position": 0.8912547528517111,
+        "bottom_position": 0.6382978723404256,
+        "paragraphs": [
+            "There is nothing in the basic principles of liberalism to make it a stationary creed, there are no hard-and-fast rules fixed once and for all. The fundamental principle that in the ordering of our affairs we should make as much use as possible of the spon- taneous forces of society, and resort as little as possible to coercion, is capable of an infinite variety of applications. There"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.9269961977186312,
+        "top_position": 0.005891980360065467,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.030418250950570342,
+        "height": 0.010474631751227497,
+        "right_position": 0.9574144486692016,
+        "bottom_position": 0.016366612111292964,
+        "paragraphs": [
+            "7"
+        ],
+        "label": "HEADER"
+    }
+]

@@ -1,0 +1,83 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.005128205128205128,
+        "left_position": 0.6190114068441065,
+        "top_position": 0.011783960720130934,
+        "font_size": 0.00975609756097561,
+        "level": 0,
+        "width": 0.29885931558935364,
+        "height": 0.006546644844517185,
+        "right_position": 0.9178707224334601,
+        "bottom_position": 0.018330605564648116,
+        "paragraphs": [
+            "THE ABANDONED ROAD"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.18181818181818182,
+        "words_count": 0.7282051282051282,
+        "left_position": 0.04714828897338403,
+        "top_position": 0.0369885433715221,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8730038022813689,
+        "height": 0.47594108019639936,
+        "right_position": 0.9201520912547528,
+        "bottom_position": 0.5129296235679215,
+        "paragraphs": [
+            "have taken place during the last generation, but the fact that they mean a complete change in the direction of the evolution of our ideas and social order. For at least twenty-five years before the spectre of totalitarianism became a real threat, we had progres- sively been moving away from the basic ideas on which Euro- pean civilisation has been built. That this movement on which we have entered with such high hopes and ambitions should have brought us face to face with the totalitarian horror has come as a profound shock to this generation, which still refuses to connect the two facts. Yet this development merely confirms the warnings of the fathers of the liberal philosophy which we still profess. We have progressively abandoned that freedom in economic affairs without which personal and political freedom has never existed in the past. Although we had been warned by some of the greatest political thinkers of the nineteenth century, by de Tocqueville and Lord Acton, that socialism means slavery, we have steadily moved in the direction of socialism. And now that we have seen a new form of slavery arise before our eyes, we have so completely forgotten the warning, that it scarcely occurs to us that the two things may be connected.\u2019",
+            "How sharp a break not only with the recent past but with the whole evolution of Western civilisation the modern trend towards socialism means, becomes clear if we consider it not merely against the background of the nineteenth century, but in a longer historical perspective. We are rapidly abandoning not the views merely of Cobden and Bright, of Adam Smith and Hume, or even of Locke and Milton, but one of the salient"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.15151515151515152,
+        "words_count": 0.20256410256410257,
+        "left_position": 0.049429657794676805,
+        "top_position": 0.5364975450081833,
+        "font_size": 0.04390243902439024,
+        "level": 0,
+        "width": 0.870722433460076,
+        "height": 0.0867430441898527,
+        "right_position": 0.9201520912547528,
+        "bottom_position": 0.623240589198036,
+        "paragraphs": [
+            "'Even much more recent warnings which have proved dreadfully true have been almost entirely forgotten. It is not yet thirty years since Mr. Hilaire Belloc, in a book which explains more of what has happened since in Germany than most works written after the event, explained that \u201cthe effect of Socialist doc- trine on Capitalist society is to produce a third thing different from either of its two begetters\u2014to wit, the Servile State\u201d (The Servile State, 1913, 3rd ed. 1927,"
+        ],
+        "label": "ANNOTATION"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.002564102564102564,
+        "left_position": 0.048669201520912544,
+        "top_position": 0.6268412438625205,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.07604562737642585,
+        "height": 0.011129296235679214,
+        "right_position": 0.1247148288973384,
+        "bottom_position": 0.6379705400981996,
+        "paragraphs": [
+            "p. xiv)."
+        ],
+        "label": "ANNOTATION"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.9566539923954372,
+        "top_position": 0.006873977086743044,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.028897338403041824,
+        "height": 0.010474631751227497,
+        "right_position": 0.9855513307984791,
+        "bottom_position": 0.01734860883797054,
+        "paragraphs": [
+            "13"
+        ],
+        "label": "HEADER"
+    }
+]

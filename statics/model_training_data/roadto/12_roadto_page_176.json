@@ -1,0 +1,83 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.019011406844106463,
+        "top_position": 0.00425531914893617,
+        "font_size": 0.01951219512195122,
+        "level": 0,
+        "width": 0.3650190114068441,
+        "height": 0.011129296235679214,
+        "right_position": 0.3840304182509506,
+        "bottom_position": 0.015384615384615385,
+        "paragraphs": [
+            "168 THE ROAD TO SERFDOM"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.21212121212121213,
+        "words_count": 0.2,
+        "left_position": 0.08593155893536121,
+        "top_position": 0.03404255319148936,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.8692015209125475,
+        "height": 0.13878887070376433,
+        "right_position": 0.9551330798479087,
+        "bottom_position": 0.1728314238952537,
+        "paragraphs": [
+            "pretend to speak for the scientists of liberal countries; intoler- ance too is openly extolled. Have we not recently seen a British scientific writer defend even Inquisition because in his opinion it \u201cis beneficial to science when it protects a rising class\u201d?\u2019 This view is, of course, practically indistinguishable from the views which led the Nazis to the persecution of men of science, the burning of scientific books, and the systematic eradication of the intelligentsia of the subjected people."
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.30798479087452474,
+        "top_position": 0.1878887070376432,
+        "font_size": 0.00975609756097561,
+        "level": 0,
+        "width": 0.42585551330798477,
+        "height": 0.006219312602291326,
+        "right_position": 0.7338403041825095,
+        "bottom_position": 0.19410801963993454,
+        "paragraphs": [
+            "* * * * *"
+        ],
+        "label": "OTHER"
+    },
+    {
+        "lines_count": 0.24242424242424243,
+        "words_count": 0.6230769230769231,
+        "left_position": 0.08593155893536121,
+        "top_position": 0.21178396072013092,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.8730038022813689,
+        "height": 0.3878887070376432,
+        "right_position": 0.9589353612167301,
+        "bottom_position": 0.5996726677577742,
+        "paragraphs": [
+            "The desire to force upon the people a creed which is regarded as salutary for them is, of course, not a thing that is new or peculiar to our time. New, however, is the argument by which many of our intellectuals try to justify such attempts. There is no real freedom of thought in our society, so it is said, because the opinions and tastes of the masses are shaped by propaganda, by advertising, by the example of the upper classes, and by other environmental factors which inevitably force the thinking of the people into well-worn grooves. From this it is concluded that if the ideals and tastes of the great majority are always fashioned by circumstances which we can control, we ought to use this power deliberately to turn the thoughts of the people in what we think is a desirable direction.",
+            "Probably it is true enough that the great majority are rarely capable of thinking independently, that on most questions they accept views which they find ready-made, and that they will be equally content if born or coaxed into one set of beliefs or another. In any society freedom of thought will probably be of direct significance only for a small minority. But this does not mean that anyone is competent, or ought to have power, to select those to whom this freedom is to be reserved. It certainly does not justify the presumption of any group of people to claim the"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.028205128205128206,
+        "left_position": 0.08821292775665399,
+        "top_position": 0.6216039279869067,
+        "font_size": 0.03902439024390244,
+        "level": 0,
+        "width": 0.6015209125475285,
+        "height": 0.01276595744680851,
+        "right_position": 0.6897338403041825,
+        "bottom_position": 0.6343698854337152,
+        "paragraphs": [
+            "' J. G. Crowther, The Social Relation of Science, 1941, p. 333."
+        ],
+        "label": "ANNOTATION"
+    }
+]

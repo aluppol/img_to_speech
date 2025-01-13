@@ -1,0 +1,84 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.007692307692307693,
+        "left_position": 0.33079847908745247,
+        "top_position": 0.009819967266775777,
+        "font_size": 0.014634146341463415,
+        "level": 0,
+        "width": 0.5703422053231939,
+        "height": 0.006873977086743044,
+        "right_position": 0.9011406844106464,
+        "bottom_position": 0.01669394435351882,
+        "paragraphs": [
+            "ECONOMIC CONTROL AND TOTALITARIANISM"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.30303030303030304,
+        "words_count": 0.7717948717948718,
+        "left_position": 0.03269961977186312,
+        "top_position": 0.0353518821603928,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8760456273764259,
+        "height": 0.5083469721767594,
+        "right_position": 0.908745247148289,
+        "bottom_position": 0.5436988543371523,
+        "paragraphs": [
+            "we as individuals should no longer be allowed to decide what we regard as marginal.",
+            "The authority directing all economic activity would control not merely the part of our lives which is concerned with inferior things; it would control the allocation of the limited means for all our ends. And whoever controls all economic activity controls the means for all our ends, and must therefore decide which are to be satisfied and which not. This is really the crux of the matter. Economic control is not merely control of a sector of human life which can be separated from the rest; it is the control of the means for all our ends. And whoever has sole control of the means must also determine which ends are to be served, which values are to be rated higher and which lower, in short, what men should believe and strive for. Central planning means that the economic problem is to be solved by the community instead of by the individual; but this involves that it must also be the community, or rather its representatives, who must decide the relative importance of the different needs.",
+            "The so-called economic freedom which the planners promise us means precisely that we are to be relieved of the necessity of solving our own economic problems and that the bitter choices which this often involves are to be made for us. Since under modern conditions we are for almost everything dependent on means which our fellow men provide, economic planning would involve direction of almost the whole of our life. There is hardly an aspect of it, from our primary needs to our relations with our family and friends, from the nature of our work to the use of our leisure, over which the planner would not exercise his \u201cconscious control\u201d.!"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.25627376425855514,
+        "top_position": 0.5574468085106383,
+        "font_size": 0.00975609756097561,
+        "level": 0,
+        "width": 0.42737642585551333,
+        "height": 0.006546644844517185,
+        "right_position": 0.6836501901140685,
+        "bottom_position": 0.5639934533551555,
+        "paragraphs": [
+            "* * * * *"
+        ],
+        "label": "OTHER"
+    },
+    {
+        "lines_count": 0.09090909090909091,
+        "words_count": 0.1282051282051282,
+        "left_position": 0.034220532319391636,
+        "top_position": 0.5777414075286416,
+        "font_size": 0.04390243902439024,
+        "level": 0,
+        "width": 0.870722433460076,
+        "height": 0.057283142389525366,
+        "right_position": 0.9049429657794676,
+        "bottom_position": 0.6350245499181669,
+        "paragraphs": [
+            "\u2018The extent of the control over all life that economic control confers is nowhere better illustrated than in the field of foreign exchanges. Nothing would at first seem to affect private life less than a state control of the dealings in foreign exchange, and most people will regard its introduction with"
+        ],
+        "label": "ANNOTATION"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.9406844106463879,
+        "top_position": 0.005237315875613748,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.030418250950570342,
+        "height": 0.010147299509001636,
+        "right_position": 0.9711026615969581,
+        "bottom_position": 0.015384615384615385,
+        "paragraphs": [
+            "95"
+        ],
+        "label": "HEADER"
+    }
+]

@@ -1,0 +1,66 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.4448669201520912,
+        "top_position": 0.17054009819967267,
+        "font_size": 0.4585365853658537,
+        "level": 0,
+        "width": 0.05095057034220532,
+        "height": 0.036333878887070375,
+        "right_position": 0.4958174904942966,
+        "bottom_position": 0.20687397708674304,
+        "paragraphs": [
+            "7"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.030303030303030304,
+        "words_count": 0.007692307692307693,
+        "left_position": 0.09505703422053231,
+        "top_position": 0.24353518821603928,
+        "font_size": 0.17073170731707318,
+        "level": 0,
+        "width": 0.7536121673003803,
+        "height": 0.04517184942716858,
+        "right_position": 0.8486692015209125,
+        "bottom_position": 0.2887070376432079,
+        "paragraphs": [
+            "ECONOMIC CONTROL AND TOTALITARIANISM"
+        ],
+        "label": "CHAPTER_TITLE"
+    },
+    {
+        "lines_count": 0.06060606060606061,
+        "words_count": 0.038461538461538464,
+        "left_position": 0.11026615969581749,
+        "top_position": 0.34009819967266774,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.7239543726235741,
+        "height": 0.03993453355155483,
+        "right_position": 0.8342205323193916,
+        "bottom_position": 0.3800327332242226,
+        "paragraphs": [
+            "The control of the production of wealth is the control of human life itself. Hilaire Belloc."
+        ],
+        "label": "EPIGRAPH"
+    },
+    {
+        "lines_count": 0.36363636363636365,
+        "words_count": 0.3384615384615385,
+        "left_position": 0.034220532319391636,
+        "top_position": 0.4104746317512275,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8775665399239544,
+        "height": 0.2265139116202946,
+        "right_position": 0.911787072243346,
+        "bottom_position": 0.6369885433715221,
+        "paragraphs": [
+            "Most planners who have seriously considered the practical aspects of their task have little doubt that a directed economy must be run on more or less dictatorial lines. That the complex system of interrelated activities, if it is to be consciously directed at all, must be directed by a single staff of experts, and that ultimate responsibility and power must rest in the hands of a commander-in-chief, whose actions must not be fettered by democratic procedure, is too obvious a consequence of under- lying ideas of central planning not to command fairly general assent. The consolation our planners offer us is that this authori- tarian direction will apply \u201conly\u201d to economic matters. One of the most prominent American planners, Mr. Stuart Chase, assures us, for instance, that in a planned society \u201cpolitical democracy"
+        ],
+        "label": "CHAPTER_TEXT"
+    }
+]

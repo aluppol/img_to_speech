@@ -74,7 +74,6 @@ class TrainingDataGenerator:
         self.__books_dir=books_dir
 
         self.__text_classifier = TextClassifier()
-        self.__text_classifier.save_model()
         self.__text_extractor = PdfTextExtractor()
         self.__text_preprocessor = TextPreprocessor()
         self.__books_feature_normalizers_manager = BooksFeatureNormalizersManager()

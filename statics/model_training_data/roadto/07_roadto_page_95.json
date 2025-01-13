@@ -1,0 +1,83 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.01282051282051282,
+        "left_position": 0.4692015209125475,
+        "top_position": 0.008183306055646482,
+        "font_size": 0.024390243902439025,
+        "level": 0,
+        "width": 0.42889733840304184,
+        "height": 0.011129296235679214,
+        "right_position": 0.8980988593155893,
+        "bottom_position": 0.019312602291325694,
+        "paragraphs": [
+            "PLANNING AND THE RULE OF LAW"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.36363636363636365,
+        "words_count": 0.4025641025641026,
+        "left_position": 0.028136882129277566,
+        "top_position": 0.03502454991816694,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.8730038022813689,
+        "height": 0.2631751227495908,
+        "right_position": 0.9011406844106464,
+        "bottom_position": 0.29819967266775776,
+        "paragraphs": [
+            "rules, have almost unlimited discretion in regulating this or that activity of the people.",
+            "The Rule of Law thus implies limits to the scope of legislation: it restricts it to the kind of general rules known as formal law, and excludes legislation either directly aimed at particular people, or at enabling anybody to use the coercive power of the state for the purpose of such discrimination. It means, not that everything is regulated by law, but, on the contrary, that the coercive power of the state can be used only in cases defined in advance by the law and in such a way that it can be foreseen how it will be used. A particular enactment can thus infringe the Rule of Law. Anyone ready to deny this would have to contend that whether the Rule of Law prevails to-day in Germany, Italy, or Russia, depends on whether the dictators have obtained their absolute power by constitutional means.\u2019"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.25171102661596956,
+        "top_position": 0.3129296235679214,
+        "font_size": 0.01951219512195122,
+        "level": 0,
+        "width": 0.42737642585551333,
+        "height": 0.006873977086743044,
+        "right_position": 0.6790874524714829,
+        "bottom_position": 0.3198036006546645,
+        "paragraphs": [
+            "* * * * *"
+        ],
+        "label": "OTHER"
+    },
+    {
+        "lines_count": 0.5757575757575758,
+        "words_count": 0.6820512820512821,
+        "left_position": 0.030418250950570342,
+        "top_position": 0.33780687397708675,
+        "font_size": 0.04390243902439024,
+        "level": 0,
+        "width": 0.8745247148288974,
+        "height": 0.2945990180032733,
+        "right_position": 0.9049429657794676,
+        "bottom_position": 0.63240589198036,
+        "paragraphs": [
+            "\u2019 Another illustration of an infringement of the Rule of Law by legislation is the case of the bill of attainder, familiar in the history of this country. The form which the Rule of Law takes in criminal law is usually expressed by the Latin tag nulla poena sine lege\u2014no punishment without a law expressly prescribing it. The essence of this rule is that the law must have existed as a general rule before the individual case arose to which it is to be applied. Nobody would argue that, when in a famous case in Henry VIII\u2019s reign Parliament resolved with respect to the Bishop of Rochester\u2019s cook \u201cthat the said Richard Rose shall be boiled to death without having the advantage of his clergy\u201d, this act was performed under the Rule of Law. But while the Rule of Law had become an essential part of criminal procedure in all liberal countries, it cannot be preserved in totali- tarian regimes. There, as E. B. Ashton has well expressed it, the liberal maxim is replaced by the principles nullum crimen sine poena\u2014no \u201ccrime\u201d must remain without punishment, whether the law explicitly provides for it or not. \u201cThe rights of the state do not end with punishing law breakers. The community is entitled to whatever may seem necessary to the protection of its interests\u2014of which observance of the law, as it stands, is only one of the more elementary requirements\u201d (E. B. Ashton, The Fascist, His State and Mind, 1937, p. 119). What is an infringement of \u201cthe interests of the community\u201d is, of course, decided by the authorities."
+        ],
+        "label": "ANNOTATION"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.0,
+        "left_position": 0.935361216730038,
+        "top_position": 0.004582651391162029,
+        "font_size": 0.07317073170731707,
+        "level": 0,
+        "width": 0.03193916349809886,
+        "height": 0.010474631751227497,
+        "right_position": 0.9673003802281369,
+        "bottom_position": 0.015057283142389525,
+        "paragraphs": [
+            "87"
+        ],
+        "label": "HEADER"
+    }
+]

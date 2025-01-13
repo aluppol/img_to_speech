@@ -1,0 +1,53 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.003041825095057034,
+        "top_position": 0.005237315875613748,
+        "font_size": 0.024390243902439025,
+        "level": 0,
+        "width": 0.36425855513307986,
+        "height": 0.011456628477905073,
+        "right_position": 0.3673003802281369,
+        "bottom_position": 0.01669394435351882,
+        "paragraphs": [
+            "196 THE ROAD TO SERFDOM"
+        ],
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.21212121212121213,
+        "words_count": 0.28974358974358977,
+        "left_position": 0.07072243346007605,
+        "top_position": 0.03502454991816694,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8692015209125475,
+        "height": 0.19181669394435352,
+        "right_position": 0.9399239543726235,
+        "bottom_position": 0.22684124386252047,
+        "paragraphs": [
+            "of the effects on a nation of a general and thorough shift of the greater part of its educational system from the \u201chumanities\u201d to the \u201crealities\u201d than Germany between 1840 and 1940.'",
+            "The way in which, in the end, with few exceptions, her scholars and scientists put themselves readily at the service of the new rulers is one of the most depressing and shameful spectacles in the whole history of the rise of National-Socialism.\u2019 It is well known that particularly the scientists and engineers, who had so loudly claimed to be the leaders on the march to a new and better world, submitted more readily than almost any other class to the new tyranny.\u2019"
+        ],
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.3333333333333333,
+        "words_count": 0.8076923076923077,
+        "left_position": 0.06920152091254753,
+        "top_position": 0.24713584288052373,
+        "font_size": 0.04390243902439024,
+        "level": 0,
+        "width": 0.8737642585551331,
+        "height": 0.3882160392798691,
+        "right_position": 0.9429657794676806,
+        "bottom_position": 0.6353518821603928,
+        "paragraphs": [
+            "I believe it was the author of Leviathan who first suggested that the teaching of the classics should be suppressed, because it instilled a dangerous spirit of liberty!",
+            "\u2019 The servility of the scientists to the powers that be appeared early in Germany, hand in hand with the great development of state-organised science which to- day is the subject of so much eulogy in this country. One of the most famous of German Scientists, the physiologist Emil du Bois-Reymond, was not ashamed, in an oration delivered in 1870 in his double capacity of Rector of the Uni- versity of Berlin and President of the Prussian Academy of Science, to proclaim that \u201cWe, the University of Berlin, quartered opposite the King\u2019s palace, are, by the deed of our foundation, the intellectual bodyguard of the House of Hohen- zollern.\u201d (A Speech on the German War, London 1870, p. 31.\u2014It is remarkable that du Bois-Reymond should have thought it advisable to issue an English edition of this oration.)",
+            "? It will suffice to quote one foreign witness: Mr. R. A. Brady, in his study of The Spirit and Structure of German Fascism, concludes his detailed account of the devel- opment in the German academic world with the statement that \u201cthe scientist, per se, is hence, perhaps, the most easily used and \u2018coordinated\u2019 of all the especially trained people in modem society. The Nazis, to be true, fired a good many University professors, and dismissed a good many scientists from research laboratories. But the professors were primarily among the social sci- ences where there was more common awareness of and a more persistent criticism of the Nazi programmes, and not among the natural sciences where thinking is supposed to be most rigorous. Those dismissed in this latter field were primarily Jewish or exceptions to the generalisations made above, because of the equally uncritical acceptance of beliefs running contrary to Nazi"
+        ],
+        "label": "ANNOTATION"
+    }
+]
