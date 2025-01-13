@@ -13,6 +13,7 @@
         "paragraphs": [
             "INTRODUCTION"
         ],
+        "paragraphs_count": 0.0,
         "label": "CHAPTER_TITLE"
     },
     {
@@ -29,6 +30,7 @@
         "paragraphs": [
             "Few discoveries are more irritating than those which expose the pedigree of ideas. Lord Acton."
         ],
+        "paragraphs_count": 0.0,
         "label": "EPIGRAPH"
     },
     {
@@ -46,6 +48,7 @@
             "Contemporary events differ from history in that we do not know the results they will produce. Looking back, we can assess the significance of past occurrences and trace the consequences they have brought in their train. But while history runs its course, it is not history to us. It leads us into an unknown land and but rarely can we get a glimpse of what lies ahead. It would be different if it were given to us to live a second time through the same events with all the knowledge of what we have seen before. How differ- ent would things appear to us, how important and often alarm- ing would changes seem that we now scarcely notice! It is probably fortunate that man can never have this experience and knows of no laws which history must obey.",
             "Yet, although history never quite repeats itself; and just because no development is inevitable, we can in a measure learn"
         ],
+        "paragraphs_count": 0.05263157894736842,
         "label": "CHAPTER_TEXT"
     }
 ]

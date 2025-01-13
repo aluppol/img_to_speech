@@ -17,14 +17,6 @@ class PdfToWavConverter:
         # self.__text_classifier = TextClassifier(text_classifier_model_path)
         pass
 
-    def train_text_classifier(self, training_data_dir: str, model_dir: str, epochs=5, loss_limit=0.5):
-        text_classifier = TextClassifier(model_dir)
-            
-        text_classifier.train_model(training_data_dir, epochs=epochs, loss_limit=loss_limit)
-        if not text_classifier.model_dir.exists():
-            text_classifier.model_dir.mkdir()
-        text_classifier.save_model(text_classifier.model_dir)
-
     def pdf_to_voice_pipeline(self, pdf_file_path: str, mp3_folder_path: str):
         text_extractor = PdfTextExtractor()
         text_assembler = TextAssembler()

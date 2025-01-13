@@ -47,6 +47,7 @@ class TrainingLabeledFeaturedBlock(FeaturedBlock):
             "right_position": self.right_position,
             "bottom_position": self.bottom_position,
             "paragraphs": self.paragraphs,
+            "paragraphs_count": self.paragraphs_count,
             "label": self.label,
         }
     

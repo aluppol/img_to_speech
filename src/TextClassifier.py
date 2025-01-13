@@ -1,15 +1,12 @@
 from transformers import BertModel, BertTokenizer, PreTrainedModel, PretrainedConfig
-import heapq
-import numpy as np
 import torch
 import torch.nn as nn
 from typing import List
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
-import pickle
 
 from TextPreprocessor import FeaturedBlock, FeaturedPage, FeaturedBook
-from LabelTransformer import label_transformer, Label
+from LabelTransformer import Label
 
 
 class LabeledFeaturedBlock(FeaturedBlock):
@@ -37,13 +34,6 @@ class LabeledFeaturedBook(List[LabeledFeaturedPage]):
     def __init__(self, pages: List[LabeledFeaturedPage] = []):
         super().__init__(pages)
 
-
-class TrainingDataset:
-  def __init__(self, path: str, text_data: List[str], featured_data: List[List[float]], labels: List[int]):
-    self.path = path
-    self.text_data = text_data
-    self.featured_data = featured_data
-    self.labels = labels
 
 
 class TextClassifierModelConfig(PretrainedConfig):
@@ -144,21 +134,6 @@ class TextClassifier:
     self.model.save_pretrained(self.model_dir)
     self.tokenizer.save_pretrained(self.model_dir)
 
-  def train_model(self, training_datasets_path: str, epochs=5, loss_limit=0.5):
-      training_datasets_paths = self.__load_path_to_each_training_dataset(training_datasets_path)
-      loaded_training_datasets = self.__load_training_datasets_from_paths(training_datasets_paths)
-      training_queue = [(-100, dataset) for dataset in loaded_training_datasets]
-      while len(training_queue) > 0:
-        last_loss, training_dataset = heapq.heappop(training_queue)
-        last_loss = -last_loss  # invert the sign from min heap to return to normal form
-        print(f'Dataset f{training_dataset.path} ... processing')
-        loss = self.__train_model_with_dataset(training_dataset, epochs=epochs)
-        print(f'Dataset f{training_dataset.path} ... done ... from {last_loss} to {loss}')
-        if loss > loss_limit:
-          heapq.heappush(training_queue, (-loss, training_dataset)) # invert sign to make min heap
-
-      print('Training ... completed')
-  
   def classify_featured_book(self, featured_book: FeaturedBook) -> LabeledFeaturedBook:
     labeled_featured_book = LabeledFeaturedBook()
     for featured_page in featured_book:
@@ -168,30 +143,39 @@ class TextClassifier:
     return labeled_featured_book
 
   def classify_featured_page(self, featured_page: FeaturedPage) -> LabeledFeaturedPage:
-    text_by_block = self.__extract_text_from_featured_page(featured_page)
-    numeric_features_by_block = self.__extract_features_from_featured_page(featured_page)
+    text_by_block = self.extract_text_from_featured_page(featured_page)
+    numeric_features_by_block = self.extract_features_from_featured_page(featured_page)
     labels = self.predict(text_by_block, numeric_features_by_block)
     return LabeledFeaturedPage(featured_page, labels)
-     
-  def __train_model_with_dataset(self,training_dataset: TrainingDataset, epochs=5):
-    self.model.train()
-    for epoch in range(epochs):
-      # Tokenize text data
-      encoded_text = self.tokenizer(training_dataset.text_data, return_tensors='pt', padding=True, truncation=True)
-      numeric_features_tensor = torch.tensor(training_dataset.featured_data, dtype=torch.float32)
-      labels_tensor = torch.tensor(training_dataset.labels, dtype=torch.int64)
 
-      # Forward pass
-      outputs = self.model(encoded_text, numeric_features_tensor)
-      loss = self.loss_fn(outputs, labels_tensor)
+  def extract_features_from_featured_page(self, featured_page: FeaturedPage) -> List[List[float]]:
+    features_by_block: List[List[float]] = []
 
-      # Backward pass and optimization
-      self.optimizer.zero_grad()
-      loss.backward()
-      self.optimizer.step()
+    for featured_block in featured_page:
+      features_from_block = self.extract_features_from_featured_block(featured_block)
+      features_by_block.append(features_from_block)
 
-      print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
-    return loss.item()
+    return features_by_block
+  
+  @staticmethod
+  def extract_text_from_featured_page(featured_page: FeaturedPage) -> List[str]:
+    return [featured_block.text for featured_block in featured_page]
+
+  @staticmethod
+  def extract_features_from_featured_block(featured_block: FeaturedBlock) -> List[float]:
+     return [
+        featured_block.left_position,
+        featured_block.top_position,
+        featured_block.right_position,
+        featured_block.bottom_position,
+        featured_block.height,
+        featured_block.width,
+        featured_block.font_size,
+        featured_block.level,
+        featured_block.paragraphs_count,
+        featured_block.lines_count,
+        featured_block.words_count,
+      ]
 
   def __load_model(
       self,
@@ -215,63 +199,4 @@ class TextClassifier:
     self.model = TextClassifierModel(
       config=config
     )
-
-  def __extract_features_from_featured_page(self, featured_page: FeaturedPage) -> List[List[float]]:
-    features_by_block: List[List[float]] = []
-
-    for featured_block in featured_page:
-      features_from_block = self.__extract_features_from_featured_block(featured_block)
-      features_by_block.append(features_from_block)
-
-    return features_by_block
-
-  def __load_training_datasets_from_paths(self, training_dataset_paths: List[str]) -> List[TrainingDataset]:
-    traininig_datasets: List[TrainingDataset] = []
-    for dataset_path in training_dataset_paths:
-      with open(dataset_path, 'rb') as pickle_file:
-        training_labeled_featured_page: LabeledFeaturedPage = pickle.load(pickle_file)
-      
-      training_text = self.__extract_features_from_featured_page(training_labeled_featured_page)
-      training_features = self.__extract_features_from_featured_page(training_labeled_featured_page)
-      labels = self.__extract_lables_from_labled_featured_page(training_labeled_featured_page)
-
-      traininig_datasets.append(TrainingDataset(dataset_path, training_text, training_features, labels))
-    return traininig_datasets
-
-  @staticmethod
-  def __extract_text_from_featured_page(featured_page: FeaturedPage) -> List[str]:
-    return [featured_block.text for featured_block in featured_page]
-
-  @staticmethod
-  def __extract_features_from_featured_block(featured_block: FeaturedBlock) -> List[float]:
-     return [
-        featured_block.left_position,
-        featured_block.top_position,
-        featured_block.right_position,
-        featured_block.bottom_position,
-        featured_block.height,
-        featured_block.width,
-        featured_block.font_size,
-        featured_block.level,
-        featured_block.paragraphs_count,
-        featured_block.lines_count,
-        featured_block.words_count,
-      ]
-    
-  @staticmethod
-  def __load_path_to_each_training_dataset(loading_path: str) -> List[str]:
-    training_dataset_extention = '.pkl'
-    file_paths = None
-    if Path(loading_path).is_file():      
-      file_paths = [loading_path]
-    else:
-      file_paths = [str(file) for file in Path(loading_path).iterdir() if file.is_file() and file.suffix == training_dataset_extention]
-      
-    return sorted(file_paths)
   
-  @staticmethod
-  def __extract_lables_from_labled_featured_page(labeled_featured_page: LabeledFeaturedPage) -> List[int]:
-    labels: List[int] = []
-    for labeled_featured_block in labeled_featured_page:
-      labels.append(label_transformer.to_int(labeled_featured_block.label))
-    return labels
