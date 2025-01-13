@@ -1,9 +1,20 @@
 from typing import List, Generator
 import re
 
-from TextClassifier import LabeledFeaturedBlock
+from TextClassifier import LabeledFeaturedBlock, LabeledFeaturedPage
 from LabelTransformer import Label
 
+
+class Page:
+    def __init__(self, labeled_featured_page: LabeledFeaturedPage):
+
+        self.header = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.HEADER]
+        self.chapter_title = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.CHAPTER_TITLE]
+        self.epigraph = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.EPIGRAPH]
+        self.chapter_text = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.CHAPTER_TEXT]
+        self.annotation = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.ANNOTATION]
+        self.footer = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.FOOTER]
+        self.title = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.TITLE]
 
 class Chapter:
   def __init__(
