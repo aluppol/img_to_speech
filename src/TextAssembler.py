@@ -7,7 +7,6 @@ from LabelTransformer import Label
 
 class Page:
     def __init__(self, labeled_featured_page: LabeledFeaturedPage):
-
         self.header = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.HEADER]
         self.chapter_title = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.CHAPTER_TITLE]
         self.epigraph = [labeled_featured_block for labeled_featured_block in labeled_featured_page if labeled_featured_block.label == Label.EPIGRAPH]

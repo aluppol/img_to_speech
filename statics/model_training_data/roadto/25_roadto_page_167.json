@@ -1,0 +1,88 @@
+[
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.6600760456273764,
+        "top_position": 0.005237315875613748,
+        "font_size": 0.01951219512195122,
+        "level": 0,
+        "width": 0.31406844106463877,
+        "height": 0.011129296235679214,
+        "right_position": 0.9741444866920153,
+        "bottom_position": 0.016366612111292964,
+        "paragraphs": [
+            "THE END OF TRUTH 159"
+        ],
+        "paragraphs_count": 0.0,
+        "label": "HEADER"
+    },
+    {
+        "lines_count": 0.5454545454545454,
+        "words_count": 0.7153846153846154,
+        "left_position": 0.03574144486692015,
+        "top_position": 0.03502454991816694,
+        "font_size": 0.06829268292682927,
+        "level": 0,
+        "width": 0.8737642585551331,
+        "height": 0.4765957446808511,
+        "right_position": 0.9095057034220533,
+        "bottom_position": 0.511620294599018,
+        "paragraphs": [
+            "hierarchical order; that most of the humanitarian elements of our morals, the respect for human life, for the weak and for the individual generally, will disappear. However repellent this may be to most people, and though it involves a change in moral standards, it is not necessarily entirely anti-moral. Some features of such a system may even appeal to the sternest moralists of a conservative tint and seem to them preferable to the softer standards of a liberal society.",
+            "The moral consequences of totalitarian propaganda which we must now consider are, however, of an even more profound kind. They are destructive of all morals because they undermine one of the foundations of all morals, the sense of and the respect for truth. From the nature of its task, totalitarian propaganda cannot confine itself to values, to questions of opinion and moral convictions in which the individual always will conform more or less to the views ruling his community, but must extend to questions of fact where human intelligence is involved in a different way. This is so, firstly, because in order to induce people to accept the official values, these must be justified, or shown to be connected with the values already held by the people, which usually will involve assertions about causal con- nections between means and ends; and, secondly, because the distinction between ends and means, between the goal aimed at and the measures taken to achieve it, is in fact never so clear-cut and definite as any general discussion of these problems is apt to suggest; and because, therefore, people must be brought to agree not only with the ultimate aims but also with the views about"
+        ],
+        "paragraphs_count": 0.05263157894736842,
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.030303030303030304,
+        "words_count": 0.02564102564102564,
+        "left_position": 0.03802281368821293,
+        "top_position": 0.5155482815057283,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.8684410646387832,
+        "height": 0.028477905073649754,
+        "right_position": 0.9064638783269962,
+        "bottom_position": 0.5440261865793781,
+        "paragraphs": [
+            "the facts and possibilities on which the particular measures are based."
+        ],
+        "paragraphs_count": 0.0,
+        "label": "CHAPTER_TEXT"
+    },
+    {
+        "lines_count": 0.0,
+        "words_count": 0.010256410256410256,
+        "left_position": 0.25931558935361215,
+        "top_position": 0.5613747954173486,
+        "font_size": 0.00975609756097561,
+        "level": 0,
+        "width": 0.4266159695817491,
+        "height": 0.006546644844517185,
+        "right_position": 0.6859315589353612,
+        "bottom_position": 0.5679214402618658,
+        "paragraphs": [
+            "* * * * *"
+        ],
+        "paragraphs_count": 0.0,
+        "label": "OTHER"
+    },
+    {
+        "lines_count": 0.06060606060606061,
+        "words_count": 0.08717948717948718,
+        "left_position": 0.037262357414448666,
+        "top_position": 0.5859247135842881,
+        "font_size": 0.06341463414634146,
+        "level": 0,
+        "width": 0.8699619771863117,
+        "height": 0.04877250409165303,
+        "right_position": 0.9072243346007605,
+        "bottom_position": 0.6346972176759411,
+        "paragraphs": [
+            "We have seen that agreement on that complete ethical code, that all-comprehensive system of values which is implicit in an eco- nornic plan, does not exist in a free society but would have to be"
+        ],
+        "paragraphs_count": 0.0,
+        "label": "CHAPTER_TEXT"
+    }
+]
