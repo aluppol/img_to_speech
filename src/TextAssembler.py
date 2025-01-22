@@ -26,8 +26,10 @@ class Chapter:
         self,
         title: str,
         paragraphs: List[Paragraph],
+        epigraph: Optional[Paragraph]
     ):
     self.title = title
+    self.epigraph = epigraph
     self.paragraphs = paragraphs
 
 
@@ -38,25 +40,14 @@ class Book:
 
 
 class TextAssembler:
-    # def __init__(self):
-    #     self.title = None
-    #     self.chapter_title = None
-    #     self.sentenses: List[Sentense] = [Sentense()]
-    #     self.annotations: List[Annotation] = []
-    #     self.annotation_references = []
-    #     self.epigraphs = []
-    #     self.authors = []
-    #     self.last_chunk_label: int = None
-    #     self.classification_mistakes = []
-    #     self.chapter=None
-
     def assemble_the_book(self, classified_book: LabeledFeaturedBook) -> Book:
-        book_title = self.__extract_book_title(classified_book)
-        chapters = self.__extract_book_chapters(classified_book)
+        preprocessed_classified_book = self.__preprocess_classified_book(classified_book)
+        book_title = self.__extract_text_by_label(preprocessed_classified_book, Label.TITLE)[0]
+        chapters = self.__extract_book_chapters(preprocessed_classified_book)
         return Book(book_title, chapters)
     
-    def __extract_book_chapters(self, classified_book: LabeledFeaturedBook) -> List[Chapter]:
-        classified_chapters = self.__slice_book_to_chapters(classified_book)
+    def __extract_book_chapters(self, preprocessed_classified_book: LabeledFeaturedBook) -> List[Chapter]:
+        classified_chapters = self.__slice_book_to_chapters(preprocessed_classified_book)
         chapters = [self.__assemble_chapter_from_classified_chapter(classified_chapter) for classified_chapter in classified_chapters]
         return chapters
     
@@ -78,22 +69,54 @@ class TextAssembler:
 
         return classified_chapters
     
-    def __assemble_chapter_from_classified_chapter(classified_chapter: LabeledFeaturedBook) -> Chapter:
+    def __assemble_chapter_from_classified_chapter(self, classified_chapter: LabeledFeaturedBook) -> Chapter:
+        title = self.__extract_text_by_label(classified_chapter, Label.CHAPTER_TITLE)[0]
+        epigraph = self.__join_paragraphs(self.__extract_annotated_text_by_label(classified_chapter, Label.EPIGRAPH))
+        paragraphs = self.__extract_annotated_text_by_label(classified_chapter, Label.CHAPTER_TEXT)
+        return Chapter(title, paragraphs, epigraph)
+
+    def __preprocess_classified_book(self, classified_book: LabeledFeaturedPage) -> LabeledFeaturedPage:
+        preprocessed_pages: List[LabeledFeaturedPage] = []
+
+        for page in classified_book:
+            preprocessed_pages.append(self.__preprocess_classified_page(page))
+        return LabeledFeaturedBook(preprocessed_pages)
+    
+    def __extract_annotated_text_by_label(self, classified_book: LabeledFeaturedBook, label: Label) -> List[Paragraph]:
         pass
 
     @staticmethod
-    def __extract_book_title(classified_book: LabeledFeaturedBook) -> str:
+    def __extract_text_by_label(classified_book: LabeledFeaturedBook, label: Label) -> List[str]:
+        text_by_label = []
         for page in classified_book:
             for block in page:
-                if block.label == Label.TITLE:
-                    return block.text
+                if block.label == Label:
+                    text_by_label.append(block.text)
+        return text_by_label
 
     @staticmethod
-    def __extract_chapter_title(classified_page: LabeledFeaturedPage) -> Optional[str]:
-        for block in classified_page:
-            if block.label == Label.CHAPTER_TITLE:
-                return block.text
+    def __preprocess_classified_page(classified_page: LabeledFeaturedPage) -> LabeledFeaturedPage:
+        preprocessed_blocks: List[LabeledFeaturedBlock] = []
 
+        for block in classified_page:
+            last_block = None if not len(preprocessed_blocks) else preprocessed_blocks[len(preprocessed_blocks) - 1]
+
+            if last_block and block.label == last_block.label:
+                last_block.paragraphs.extend(block.paragraphs)
+            else:
+                preprocessed_blocks.append(block)
+
+        return LabeledFeaturedPage(preprocessed_blocks)
+    
+    @staticmethod
+    def __join_paragraphs(paragraphs: List[Paragraph]) -> Paragraph:
+        texts: List[str] = [paragraph.text for paragraph in paragraphs]
+        annotations: List[str] = []
+        for paragraph in paragraphs:
+            texts.append(paragraph.text)
+            annotations.extend(paragraph.annotations)
+
+        return Paragraph('\n'.join(texts), annotations)
 
 
 
