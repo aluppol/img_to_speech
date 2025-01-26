@@ -1,8 +1,9 @@
-from typing import List, Generator, Optional
-import re
+from typing import List, Generator, Optional, Any
+from functools import singledispatchmethod
 
 from TextClassifier import LabeledFeaturedBlock, LabeledFeaturedPage, LabeledFeaturedBook
 from LabelTransformer import Label
+from TextAnalyzer import TextAnalyzer
 
 
 class Annotation:
@@ -15,7 +16,7 @@ class Annotation:
         self.reference = reference
 
 
-class Paragraph:
+class AnnotatedParagraph:
       def __init__(self, text: str, annotations: List[Annotation]):
           self.text = text
           self.annotations = annotations
@@ -25,8 +26,8 @@ class Chapter:
   def __init__(
         self,
         title: str,
-        paragraphs: List[Paragraph],
-        epigraph: Optional[Paragraph]
+        paragraphs: List[AnnotatedParagraph],
+        epigraph: Optional[AnnotatedParagraph]
     ):
     self.title = title
     self.epigraph = epigraph
@@ -40,6 +41,9 @@ class Book:
 
 
 class TextAssembler:
+    def __init__(self):
+        self.__text_analyzer = TextAnalyzer()
+
     def assemble_the_book(self, classified_book: LabeledFeaturedBook) -> Book:
         preprocessed_classified_book = self.__preprocess_classified_book(classified_book)
         book_title = self.__extract_text_by_label(preprocessed_classified_book, Label.TITLE)[0]
@@ -71,8 +75,8 @@ class TextAssembler:
     
     def __assemble_chapter_from_classified_chapter(self, classified_chapter: LabeledFeaturedBook) -> Chapter:
         title = self.__extract_text_by_label(classified_chapter, Label.CHAPTER_TITLE)[0]
-        epigraph = self.__join_paragraphs(self.__extract_annotated_text_by_label(classified_chapter, Label.EPIGRAPH))
-        paragraphs = self.__extract_annotated_text_by_label(classified_chapter, Label.CHAPTER_TEXT)
+        epigraph = self.__join_annotated_paragraphs(self.__extract_annotated_paragraphs_by_label_from_book(classified_chapter, Label.EPIGRAPH))
+        paragraphs = self.__extract_annotated_paragraphs_by_label_from_book(classified_chapter, Label.CHAPTER_TEXT)
         return Chapter(title, paragraphs, epigraph)
 
     def __preprocess_classified_book(self, classified_book: LabeledFeaturedPage) -> LabeledFeaturedPage:
@@ -82,16 +86,61 @@ class TextAssembler:
             preprocessed_pages.append(self.__preprocess_classified_page(page))
         return LabeledFeaturedBook(preprocessed_pages)
     
-    def __extract_annotated_text_by_label(self, classified_book: LabeledFeaturedBook, label: Label) -> List[Paragraph]:
-        pass
+    def __extract_annotated_paragraphs_by_label_from_book(self, classified_book: LabeledFeaturedBook, label: Label) -> List[AnnotatedParagraph]:
+        pages_processed_at_a_time = 1
+        for i in range(len(classified_book)):
+            annotations_from_current_page = self.__extract_paragraphs_by_label(classified_book[i], Label.ANNOTATION)
+            if len(page_annotations):
+                pass
 
-    @staticmethod
-    def __extract_text_by_label(classified_book: LabeledFeaturedBook, label: Label) -> List[str]:
+    def __extract_paragraphs_by_label_that_start_on_page_number(self, classified_book: LabeledFeaturedBook, label: Label, page_number: int) -> List[str]:
+        processed_pages = 0
+        previous_page_paragraphs = self.__extract_paragraphs_by_label(classified_book[page_number - 1]) if page_number > 0 else []
+        paragraphs = self.__extract_paragraphs_by_label(classified_book[page_number - 1])
+        is_remove_first_paragraph_of_the_page = True if (len(previous_page_paragraphs) > 0 and self.__text_analyzer.is_the_same_paragraph(previous_page_paragraphs))
+        
+        while processed_pages < 1:
+            processed_pages += 1
+            next_page_paragraphs: List[str] = self.__extract_paragraphs_by_label(classified_book[page_number]) if len(classified_book) > page_number else []
+            end_of_page = paragraphs[len(paragraphs) - 1]
+            
+
+    @singledispatchmethod
+    def __extract_paragraphs_by_label(self, classified_book: Any, label: Label) -> List[str]:
+        raise TypeError(f'Unsupported type "{type(classified_book)}" for text extraction') 
+    
+    @__extract_paragraphs_by_label.register
+    def _(self, classified_book: LabeledFeaturedBook, label: Label) -> List[str]:
+        paragraphs_by_label = []
+        for page in classified_book:
+            paragraphs_by_label.extend(self.__extract_text_by_label(page, label))
+        return paragraphs_by_label
+    
+    @__extract_paragraphs_by_label.register
+    def _(self, classified_page: LabeledFeaturedPage, label: Label) -> List[str]:
+        paragraphs_by_label = []
+        for block in classified_page:
+            if block.label == label:
+                paragraphs_by_label.extend(block.paragraphs)
+        return paragraphs_by_label
+
+    @singledispatchmethod
+    def __extract_text_by_label(self, classified_book: Any, label: Label) -> List[str]:
+        raise TypeError(f'Unsupported type "{type(classified_book)}" for text extraction') 
+    
+    @__extract_text_by_label.register
+    def _(self, classified_book: LabeledFeaturedBook, label: Label) -> List[str]:
         text_by_label = []
         for page in classified_book:
-            for block in page:
-                if block.label == Label:
-                    text_by_label.append(block.text)
+            text_by_label.extend(self.__extract_text_by_label(page, label))
+        return text_by_label
+    
+    @__extract_text_by_label.register
+    def _(self, classified_page: LabeledFeaturedPage, label: Label) -> List[str]:
+        text_by_label = []
+        for block in classified_page:
+            if block.label == label:
+                text_by_label.append(block.text)
         return text_by_label
 
     @staticmethod
@@ -109,15 +158,14 @@ class TextAssembler:
         return LabeledFeaturedPage(preprocessed_blocks)
     
     @staticmethod
-    def __join_paragraphs(paragraphs: List[Paragraph]) -> Paragraph:
+    def __join_annotated_paragraphs(paragraphs: List[AnnotatedParagraph]) -> AnnotatedParagraph:
         texts: List[str] = [paragraph.text for paragraph in paragraphs]
         annotations: List[str] = []
         for paragraph in paragraphs:
             texts.append(paragraph.text)
             annotations.extend(paragraph.annotations)
 
-        return Paragraph('\n'.join(texts), annotations)
-
+        return AnnotatedParagraph('\n'.join(texts), annotations)
 
 
 
