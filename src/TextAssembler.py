@@ -121,9 +121,17 @@ class TextAssembler:
             annotations.extend(self.__text_analyzer.split_text_to_paragraphs(annotation))
 
         for paragraph in label_paragraphs:
-            annotations_to_the_current_paragraph = self.__text_analyzer.match_annotations_to_the_text(paragraph, annotations)
-            annotations = [annotation for annotation in annotations if annotation not in annotations_to_the_current_paragraph]
-            annotated_paragraphs.append(AnnotatedParagraph(paragraph, annotations_to_the_current_paragraph))
+            current_paragraph_annotations: List[str] = []
+            unused_annotations: List[str] = []
+
+            for annotation in annotations:
+                if self.__text_analyzer.is_annotation_belong_to_the_text(paragraph, annotation):
+                    current_paragraph_annotations.append(annotation)
+                else:
+                    unused_annotations.append(annotation)
+
+            annotated_paragraphs.append(AnnotatedParagraph(paragraph, current_paragraph_annotations))
+            annotations = unused_annotations
 
         return annotated_paragraphs
             
