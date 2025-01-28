@@ -86,23 +86,46 @@ class TextAssembler:
             preprocessed_pages.append(self.__preprocess_classified_page(page))
         return LabeledFeaturedBook(preprocessed_pages)
     
-    def __extract_annotated_paragraphs_by_label_from_book(self, classified_book: LabeledFeaturedBook, label: Label) -> List[AnnotatedParagraph]:
-        pages_processed_at_a_time = 1
-        for i in range(len(classified_book)):
-            annotations_from_current_page = self.__extract_paragraphs_by_label(classified_book[i], Label.ANNOTATION)
-            if len(page_annotations):
-                pass
+    @singledispatchmethod
+    def __extract_annotated_paragraphs(self, classified_text: Any, label: Label):
+        raise TypeError(f'Unsupported type "{type(classified_text)}" for text extraction') 
+    
+    @__extract_annotated_paragraphs.register
+    def __extract_annotated_paragraphs(self, classified_book: LabeledFeaturedBook, label: Label) -> List[AnnotatedParagraph]:
+        pages_paragraphs: List[List[AnnotatedParagraph]] = [self.__extract_annotated_paragraphs(page, label) for page in classified_book]
+        paragraphs: List[AnnotatedParagraph] = []
+        for page_paragraphs in pages_paragraphs:
+            if not len(page_paragraphs):
+                continue
 
-    def __extract_paragraphs_by_label_that_start_on_page_number(self, classified_book: LabeledFeaturedBook, label: Label, page_number: int) -> List[str]:
-        processed_pages = 0
-        previous_page_paragraphs = self.__extract_paragraphs_by_label(classified_book[page_number - 1]) if page_number > 0 else []
-        paragraphs = self.__extract_paragraphs_by_label(classified_book[page_number - 1])
-        is_remove_first_paragraph_of_the_page = True if (len(previous_page_paragraphs) > 0 and self.__text_analyzer.is_the_same_paragraph(previous_page_paragraphs))
+            if len(paragraphs) == 0:
+                paragraphs.extend(page_paragraphs)
+            else:
+                last_paragraph_of_the_page = paragraphs.pop()
+                first_paragraph_of_next_page = page_paragraphs.pop(0)
+                if self.__text_analyzer.is_the_same_paragraph(last_paragraph_of_the_page.text, first_paragraph_of_next_page.text):
+                    paragraphs.append(self.__join_annotated_paragraphs([last_paragraph_of_the_page, first_paragraph_of_next_page]))
+                else:
+                    paragraphs.extend([last_paragraph_of_the_page, first_paragraph_of_next_page])
+                paragraphs.extend(page_paragraphs[1:])
+                
         
-        while processed_pages < 1:
-            processed_pages += 1
-            next_page_paragraphs: List[str] = self.__extract_paragraphs_by_label(classified_book[page_number]) if len(classified_book) > page_number else []
-            end_of_page = paragraphs[len(paragraphs) - 1]
+    @__extract_annotated_paragraphs.register
+    def _(self, classified_page: LabeledFeaturedPage, label: Label) -> List[AnnotatedParagraph]:
+        label_paragraphs = self.__extract_paragraphs_by_label(classified_page, label)
+        page_annotations = self.__extract_paragraphs_by_label(classified_page, Label.ANNOTATION)
+        annotations: List[str] = []
+        annotated_paragraphs: List[AnnotatedParagraph] = []
+
+        for annotation in page_annotations:
+            annotations.extend(self.__text_analyzer.split_text_to_paragraphs(annotation))
+
+        for paragraph in label_paragraphs:
+            annotations_to_the_current_paragraph = self.__text_analyzer.match_annotations_to_the_text(paragraph, annotations)
+            annotations = [annotation for annotation in annotations if annotation not in annotations_to_the_current_paragraph]
+            annotated_paragraphs.append(AnnotatedParagraph(paragraph, annotations_to_the_current_paragraph))
+
+        return annotated_paragraphs
             
 
     @singledispatchmethod
@@ -158,137 +181,11 @@ class TextAssembler:
         return LabeledFeaturedPage(preprocessed_blocks)
     
     @staticmethod
-    def __join_annotated_paragraphs(paragraphs: List[AnnotatedParagraph]) -> AnnotatedParagraph:
+    def __join_annotated_paragraphs(paragraphs: List[AnnotatedParagraph], join_with = '\n') -> AnnotatedParagraph:
         texts: List[str] = [paragraph.text for paragraph in paragraphs]
         annotations: List[str] = []
         for paragraph in paragraphs:
             texts.append(paragraph.text)
             annotations.extend(paragraph.annotations)
 
-        return AnnotatedParagraph('\n'.join(texts), annotations)
-
-
-
-
-    # def process_classified_text(self, classified_text: List[LabeledFeaturedBlock]) -> Generator[Chapter, None, None]:
-    #     for chunk in classified_text:
-    #         match chunk.label:
-    #             case Label.TITLE.value:
-    #                 self.__process_title(chunk.text)
-                
-    #             case Label.CHAPTER_TITLE.value:
-    #                 self.__process_chapter_title(chunk.text)
-
-    #             case Label.CHAPTER_TEXT.value:
-    #                 self.__process_chapter_text(chunk.text)
-
-    #             case Label.ANNOTATION.value:
-    #                 self.__process_annotation(chunk.text)
-                
-    #             case Label.ANNOTATION_REFERENCE.value:
-    #                 self.__process_annotation_references(chunk.text)
-
-    #             case Label.EPIGRAPH.value:
-    #                 self.__process_epigraph(chunk.text)
-
-    #             case Label.AUTHOR.value:
-    #                 self.__process_author(chunk.text)
-
-    #             case _:
-    #                 pass    # add to logging all passed chunks
-        
-    #     if self.chapter:
-    #         chapter = self.chapter
-    #         self.chapter = None
-    #         yield chapter
-
-    # def save_chapter(self):
-    #     chapter_text = ''
-    #     for i in range(len(self.epigraphs)):
-    #         chapter_text += self.epigraphs[i] + '\n'
-    #         chapter_text += self.authors[i] + '\n'
-
-    #     for sentense in self.sentenses:
-    #         chapter_text += ' ' + sentense.text
-    #         for reference in sentense.annotation_references:
-    #             annotation = next((ann for ann in self.annotations if ann.reference == reference), None)
-    #             if annotation:
-    #                 chapter_text += ' ' + annotation.text
-    #             else:
-    #                 raise Exception(f'No reference for "{reference}" annotation found!')
-                        
-    #     self.chapter = Chapter(self.chapter_title, chapter_text)
-
-    #     self.chapter_title = None
-    #     self.annotation_references = []
-    #     self.annotations = []
-    #     self.epigraphs = []
-    #     self.authors = []
-    #     self.sentenses = []
-    #     self.last_chunk_label = None
-
-    # def __process_title(self, text: str):
-    #     if (self.title or not self.last_chunk_label) and self.last_chunk_label == Label.TITLE:
-    #         self.title += text
-    #         self.last_chunk_label = Label.TITLE
-    #     elif self.last_chunk_label != Label.TITLE:
-    #         self.classification_mistakes.append(LabeledFeaturedBlock(Label.TITLE, text))
-
-    # def __process_chapter_title(self, text: str):
-    #     if self.last_chunk_label != Label.CHAPTER_TITLE:
-    #         if self.chapter_title:
-    #             self.save_chapter()
-    #         self.chapter_title = text
-    #         self.last_chunk_label = Label.CHAPTER_TITLE
-
-    #     else:
-    #         self.chapter_title += text
-
-
-    # def __process_chapter_text(self, text: str):
-    #     if self.last_chunk_label == Label.ANNOTATION_REFERENCE:
-    #         ref = self.annotation_references[len(self.annotation_references) - 1]
-    #         current_sentense_text = self.sentenses[len(self.sentenses) - 1].text.strip()
-    #         self.sentenses[(len(self.sentenses) - 1) if current_sentense_text else (len(self.sentenses) - 2)].annotation_references.append(ref)
-
-    #     end_of_sentense_match = re.match(r"(.*?[.!?]\s*)(.*)", text, re.DOTALL)
-    #     while end_of_sentense_match:
-    #         self.sentenses[len(self.sentenses) - 1].text += end_of_sentense_match.group(1)
-    #         self.sentenses.append(Sentense())
-    #         text = end_of_sentense_match.group(2)
-    #         end_of_sentense_match = re.match(r"(.*?[.!?]\s*)(.*)", text, re.DOTALL)
-
-    #     self.sentenses[len(self.sentenses) - 1].text += text
-    #     self.last_chunk_label = Label.CHAPTER_TEXT
-
-    # def __process_annotation(self, text: str):
-    #     if self.last_chunk_label == Label.ANNOTATION_REFERENCE:
-    #         self.annotations.append(Annotation(text, self.annotation_references[len(self.annotation_references) - 1]))
-    #         self.annotation_references.append('')
-    #     else:
-    #         self.annotations[len(self.annotations) - 1].text += text
-
-    #     self.last_chunk_label = Label.ANNOTATION
-
-    # def __process_annotation_references(self, text: str):
-    #     if self.last_chunk_label == Label.ANNOTATION_REFERENCE:
-    #         self.annotation_references[len(self.annotation_references) - 1] += re.sub(r"[^a-zA-Z0-9]", "", text)
-    #     else:
-    #         self.annotation_references.append(re.sub(r"[^a-zA-Z0-9]", "", text))
-    #         self.last_chunk_label = Label.ANNOTATION_REFERENCE
-
-    # def __process_epigraph(self, text: str):
-    #     if self.last_chunk_label == Label.EPIGRAPH:
-    #         self.epigraphs[len(self.epigraphs) - 1] += text
-    #     else:
-    #         self.epigraphs.append(text)
-        
-    #     self.last_chunk_label = Label.EPIGRAPH
-
-    # def __process_author(self, text: str):
-        # if self.last_chunk_label == Label.AUTHOR:
-        #     self.authors[len(self.authors) - 1] += text
-        # else:
-        #     self.authors.append(text)
-
-        # self.last_chunk_label = Label.AUTHOR
+        return AnnotatedParagraph(join_with.join(texts), annotations)
