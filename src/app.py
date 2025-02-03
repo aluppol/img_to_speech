@@ -11,7 +11,7 @@ if __name__ == '__main__':
   # text_classifier_trainer.train_text_classifier(loss_limit=0.3)
 
   pdf_to_wav_converter = PdfToWavConverter()
-  pdf_to_wav_converter.convert_pdf_to_wav('statics/books/roadto.pdf', 'statics/output_audio')
+  pdf_to_wav_converter.convert_pdf_to_wav('statics/books/roadto_ch_15.pdf', 'statics/output_audio')
 
   # pdf_to_voice_pipeline('statics/roadto.pdf', 'statics/output_audio')
   # pdf_to_wav_converter.generate_training_data('statics/books/roadto_9.pdf', 'statics/model_training_data/roadto/01-page-9-introduction')
