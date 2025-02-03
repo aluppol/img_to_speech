@@ -6,13 +6,13 @@ from pathlib import Path
 class TextAnalyzer:
     def __init__(self, model_dir='src/models/img_to_speech-book_text_analyzer_model', model_name='meta-llama/Llama-2-7b-chat-hf'):
         try:
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.model = AutoModelForCausalLM.from_pretrained(model_name=model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+            self.model = AutoModelForCausalLM.from_pretrained(model_dir)
             print(f'Model ... loaded from {model_dir}')
         except Exception as e:
             print(f'Failed to load model from {model_dir} ({e}); Initializing model ... from {model_name}')
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.model = AutoModelForCausalLM.from_pretrained(model_name=model_name)
+            self.model = AutoModelForCausalLM.from_pretrained(model_name)
 
             path_to_model_dir = Path(model_dir)
             if not path_to_model_dir.exists():
