@@ -91,7 +91,7 @@ class TextAssembler:
         raise TypeError(f'Unsupported type "{type(classified_text)}" for text extraction') 
     
     @__extract_annotated_paragraphs.register
-    def __extract_annotated_paragraphs(self, classified_book: LabeledFeaturedBook, label: Label) -> List[AnnotatedParagraph]:
+    def _(self, classified_book: LabeledFeaturedBook, label: Label) -> List[AnnotatedParagraph]:
         pages_paragraphs: List[List[AnnotatedParagraph]] = [self.__extract_annotated_paragraphs(page, label) for page in classified_book]
         paragraphs: List[AnnotatedParagraph] = []
         for page_paragraphs in pages_paragraphs:
