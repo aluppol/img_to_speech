@@ -151,10 +151,9 @@ class BooksFeatureNormalizersManager():
 
     def load_or_init_normalizer(self, book_title: str, featured_book: FeaturedBook) -> BookFeatureNormalizer:
         try:
-            self.load_normalizer_for_book(book_title)
+            return self.load_normalizer_for_book(book_title)
         except:
-            normalizer = self.initiate_and_save_normalizer(book_title, featured_book)
-            return normalizer
+            return self.initiate_and_save_normalizer(book_title, featured_book)
     
     def initiate_and_save_normalizer(self, book_title: str, featured_book: FeaturedBook):
         normalizer = self.BookFeatureNormalizer()

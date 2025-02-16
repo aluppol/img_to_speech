@@ -2,7 +2,7 @@ from typing import List, Generator, Optional, Any
 from functools import singledispatchmethod
 
 from TextClassifier import LabeledFeaturedBlock, LabeledFeaturedPage, LabeledFeaturedBook
-from LabelTransformer import Label
+from LabelTransformer import Label, label_transformer
 from TextAnalyzer import TextAnalyzer
 
 
@@ -43,10 +43,11 @@ class Book:
 class TextAssembler:
     def __init__(self):
         self.__text_analyzer = TextAnalyzer()
+        self.__label_transformer = label_transformer
 
     def assemble_the_book(self, classified_book: LabeledFeaturedBook) -> Book:
         preprocessed_classified_book = self.__preprocess_classified_book(classified_book)
-        book_title = self.__extract_text_by_label(preprocessed_classified_book, Label.TITLE)[0]
+        book_title = next(iter(self.__extract_text_by_label(preprocessed_classified_book, Label.TITLE)), 'Untitled book')
         chapters = self.__extract_book_chapters(preprocessed_classified_book)
         return Book(book_title, chapters)
     
@@ -60,7 +61,7 @@ class TextAssembler:
         chapter_start_index = None
 
         for i in range(len(classified_book)):
-            chapter_title_from_page = self.__extract_chapter_title(classified_page=classified_book[i])
+            chapter_title_from_page = next(iter(self.__extract_text_by_label(classified_book[i], Label.CHAPTER_TITLE)), None)
             if chapter_title_from_page:
                 if chapter_start_index:
                     classified_chapter = LabeledFeaturedBook(classified_book[chapter_start_index:i])
@@ -75,11 +76,11 @@ class TextAssembler:
     
     def __assemble_chapter_from_classified_chapter(self, classified_chapter: LabeledFeaturedBook) -> Chapter:
         title = self.__extract_text_by_label(classified_chapter, Label.CHAPTER_TITLE)[0]
-        epigraph = self.__join_annotated_paragraphs(self.__extract_annotated_paragraphs_by_label_from_book(classified_chapter, Label.EPIGRAPH))
-        paragraphs = self.__extract_annotated_paragraphs_by_label_from_book(classified_chapter, Label.CHAPTER_TEXT)
+        epigraph = self.__join_annotated_paragraphs(self.__extract_annotated_paragraphs(classified_chapter, Label.EPIGRAPH))
+        paragraphs = self.__extract_annotated_paragraphs(classified_chapter, Label.CHAPTER_TEXT)
         return Chapter(title, paragraphs, epigraph)
 
-    def __preprocess_classified_book(self, classified_book: LabeledFeaturedPage) -> LabeledFeaturedPage:
+    def __preprocess_classified_book(self, classified_book: LabeledFeaturedBook) -> LabeledFeaturedBook:
         preprocessed_pages: List[LabeledFeaturedPage] = []
 
         for page in classified_book:
@@ -87,7 +88,7 @@ class TextAssembler:
         return LabeledFeaturedBook(preprocessed_pages)
     
     @singledispatchmethod
-    def __extract_annotated_paragraphs(self, classified_text: Any, label: Label):
+    def __extract_annotated_paragraphs(self, classified_text: Any, label: Label) -> List[AnnotatedParagraph]:
         raise TypeError(f'Unsupported type "{type(classified_text)}" for text extraction') 
     
     @__extract_annotated_paragraphs.register
@@ -108,6 +109,8 @@ class TextAssembler:
                 else:
                     paragraphs.extend([last_paragraph_of_the_page, first_paragraph_of_next_page])
                 paragraphs.extend(page_paragraphs[1:])
+
+        return paragraphs
                 
         
     @__extract_annotated_paragraphs.register
@@ -151,7 +154,7 @@ class TextAssembler:
     def _(self, classified_page: LabeledFeaturedPage, label: Label) -> List[str]:
         paragraphs_by_label = []
         for block in classified_page:
-            if block.label == label:
+            if block.label == self.__label_transformer.to_int(label):
                 paragraphs_by_label.extend(block.paragraphs)
         return paragraphs_by_label
 
@@ -170,7 +173,7 @@ class TextAssembler:
     def _(self, classified_page: LabeledFeaturedPage, label: Label) -> List[str]:
         text_by_label = []
         for block in classified_page:
-            if block.label == label:
+            if block.label == self.__label_transformer.to_int(label):
                 text_by_label.append(block.text)
         return text_by_label
 
@@ -186,7 +189,7 @@ class TextAssembler:
             else:
                 preprocessed_blocks.append(block)
 
-        return LabeledFeaturedPage(preprocessed_blocks)
+        return LabeledFeaturedPage(preprocessed_blocks, [block.label for block in preprocessed_blocks])
     
     @staticmethod
     def __join_annotated_paragraphs(paragraphs: List[AnnotatedParagraph], join_with = '\n') -> AnnotatedParagraph:

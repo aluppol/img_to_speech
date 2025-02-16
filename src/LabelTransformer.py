@@ -21,7 +21,7 @@ class LabelTransformer:
         self.str_to_label = {label.name: label for label in Label}
 
     @singledispatchmethod
-    def to_int(self, label_or_str):
+    def to_int(self, label_or_str) -> int:
         """Convert label enum or string to integer."""
         raise ValueError(f"Input must be a Label enum or a string. Got {type(label_or_str)}.")
 

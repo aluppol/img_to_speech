@@ -19,20 +19,20 @@ class TextAnalyzer:
                 Path(model_dir).mkdir(parents=True, exist_ok=True)
 
             self.tokenizer.save_pretrained(model_dir)
-            self.model.save_pretraied(model_dir)
+            self.model.save_pretrained(model_dir)
             
 
     def is_the_same_paragraph(self, end_of_page: str, beginning_of_next_page: str) -> bool:
-        prompt = f'''Does sentences in the tripple brackets belong to the same paragraph? \n
+        prompt = f'''Does sentences in the triple brackets belong to the same paragraph? \n
             """ {end_of_page}"""\n"""{beginning_of_next_page}"""\n
             Answer with "yes" or "no" only.'''
         inputs = self.tokenizer(prompt, return_tensors='pt')
-        outputs = self.model.generate(**inputs, max_length=10)
+        outputs = self.model.generate(**inputs, max_length=1000)
         answer = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         return 'yes' in answer.lower()
 
     def split_text_to_paragraphs(self, text: str) -> List[str]:
-        prompt = f'''Split text provided in the tripple brackets into paragraphs: \n
+        prompt = f'''Split text provided in the triple brackets into paragraphs: \n
             """ {text}"""\n
             Provide answer in the next form:
             Paragraph 1\n\nParagraph 2\n\nParagraph3\n\n...
@@ -43,9 +43,9 @@ class TextAnalyzer:
         return paragraphs.split("\n\n")
 
     def is_annotation_belong_to_the_text(self, text: str, annotation: str) -> bool:
-        prompt = f'''Does annotation provided in the tripple brackets belong to the text provided in double brackets? \n
+        prompt = f'''Does annotation provided in the triple brackets belong to the text provided in double brackets? \n
             """ {annotation}"""\n""{text}""\n
             Answer with "yes" or "no" only.'''
         inputs = self.tokenizer(prompt, return_tensors="pt")
-        outputs = self.model.generate(**inputs, max_length=10)
+        outputs = self.model.generate(**inputs, max_length=1000)
         return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
