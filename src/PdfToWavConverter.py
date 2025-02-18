@@ -52,11 +52,4 @@ class PdfToWavConverter:
         normalized_featured_book = feature_normalizer.normalize(featured_book)
         classified_book = self.__text_classifier.classify_featured_book(normalized_featured_book)
         book = self.__text_assembler.assemble_the_book(classified_book)
-        print(book.title)
-        for chapter in book.chapters:
-            print(chapter.title)
-            print(chapter.epigraph)
-            for paragraph in chapter.paragraphs:
-                print(paragraph.text)
-                print(paragraph.annotations)
-        
+        print(book)

@@ -15,29 +15,42 @@ class Annotation:
         self.text = text
         self.reference = reference
 
+    def __str__(self):
+        return self.text
+
 
 class AnnotatedParagraph:
-      def __init__(self, text: str, annotations: List[Annotation]):
-          self.text = text
-          self.annotations = annotations
+    def __init__(self, text: str, annotations: List[Annotation]):
+        self.text = text
+        self.annotations = annotations
+
+    def __str__(self):
+        return self.text + '\n' + '\n'.join([str(annotation) for annotation in self.annotations])
 
 
 class Chapter:
-  def __init__(
-        self,
-        title: str,
-        paragraphs: List[AnnotatedParagraph],
-        epigraph: Optional[AnnotatedParagraph]
-    ):
-    self.title = title
-    self.epigraph = epigraph
-    self.paragraphs = paragraphs
+    def __init__(
+            self,
+            title: str,
+            paragraphs: List[AnnotatedParagraph],
+            epigraph: Optional[AnnotatedParagraph]
+        ):
+        self.title = title
+        self.epigraph = epigraph
+        self.paragraphs = paragraphs
+
+    def __str__(self):
+        return self.title + '\n' + str(self.epigraph) + '\n' + '\n'.join([str(paragraph) for paragraph in self.paragraphs])
+
 
 
 class Book:
     def __init__(self, title: str, chapters: List[Chapter]):
         self.title = title
         self.chapters = chapters
+
+    def __str__(self):
+        return self.title + '\n' + '\n'.join([str(chapter) for chapter in self.chapters])
 
 
 class TextAssembler:

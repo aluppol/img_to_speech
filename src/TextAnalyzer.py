@@ -36,7 +36,7 @@ class TextAnalyzer:
             """ {text}"""\n
             Provide answer in the next form:
             Paragraph 1\n\nParagraph 2\n\nParagraph3\n\n...
-            \n\n\nNo metter what not include anything else other then exactly the same text that was provided splitted into described format'''
+            \n\n\nNo matter what not include anything else other then exactly the same text that was provided splitted into described format'''
         inputs = self.tokenizer(prompt, return_tensors='pt')
         outputs = self.model.generate(**inputs, max_length=1000)
         paragraphs = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
