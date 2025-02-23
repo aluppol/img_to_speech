@@ -23,6 +23,8 @@ class TextAnalyzer:
             
 
     def is_the_same_paragraph(self, end_of_page: str, beginning_of_next_page: str) -> bool:
+        end_of_page = end_of_page[-1000:]
+        beginning_of_next_page = beginning_of_next_page[:1000]
         prompt = f'''Does sentences in the triple brackets belong to the same paragraph? \n
             """ {end_of_page}"""\n"""{beginning_of_next_page}"""\n
             Answer with "yes" or "no" only.'''
@@ -35,7 +37,9 @@ class TextAnalyzer:
         prompt = f'''Split text provided in the triple brackets into paragraphs: \n
             """ {text}"""\n
             Provide answer in the next form:
+            ""
             Paragraph 1\n\nParagraph 2\n\nParagraph3\n\n...
+            ""
             \n\n\nNo matter what not include anything else other then exactly the same text that was provided splitted into described format'''
         inputs = self.tokenizer(prompt, return_tensors='pt')
         outputs = self.model.generate(**inputs, max_length=1000)
