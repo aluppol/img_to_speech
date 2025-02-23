@@ -1,5 +1,6 @@
 from typing import List, Generator, Optional, Any
 from functools import singledispatchmethod
+import re
 
 from TextClassifier import LabeledFeaturedBlock, LabeledFeaturedPage, LabeledFeaturedBook
 from LabelTransformer import Label, label_transformer
@@ -74,14 +75,14 @@ class TextAssembler:
         chapter_start_index = None
 
         for i in range(len(classified_book)):
-            chapter_title_from_page = next(iter(self.__extract_text_by_label(classified_book[i], Label.CHAPTER_TITLE)), None)
+            chapter_title_from_page = self.__extract_chapter_title_from_page(classified_book[i])
             if chapter_title_from_page:
-                if chapter_start_index:
+                if chapter_start_index is not None:
                     classified_chapter = LabeledFeaturedBook(classified_book[chapter_start_index:i])
                     classified_chapters.append(classified_chapter)
                 chapter_start_index = i
 
-        if chapter_start_index:
+        if chapter_start_index is not None:
             last_classified_chapter = LabeledFeaturedBook(classified_book[chapter_start_index:])
             classified_chapters.append(last_classified_chapter)
 
@@ -190,6 +191,14 @@ class TextAssembler:
                 text_by_label.append(block.text)
         return text_by_label
 
+    def __extract_chapter_title_from_page(self, page: LabeledFeaturedPage) -> str:
+        title = next(iter(self.__extract_text_by_label(page, Label.CHAPTER_TITLE)), "")
+        if re.search(r'[A-Za-z]', title):
+            return title
+        else:
+            return ""
+
+    
     @staticmethod
     def __preprocess_classified_page(classified_page: LabeledFeaturedPage) -> LabeledFeaturedPage:
         preprocessed_blocks: List[LabeledFeaturedBlock] = []
@@ -213,3 +222,4 @@ class TextAssembler:
             annotations.extend(paragraph.annotations)
 
         return AnnotatedParagraph(join_with.join(texts), annotations)
+    
