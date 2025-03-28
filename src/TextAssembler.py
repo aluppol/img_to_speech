@@ -1,4 +1,4 @@
-from typing import List, Generator, Optional, Any
+from typing import List, Optional, Any
 from functools import singledispatchmethod
 import re
 
@@ -125,8 +125,7 @@ class TextAssembler:
                 paragraphs.extend(page_paragraphs[1:])
 
         return paragraphs
-                
-        
+                 
     @__extract_annotated_paragraphs.register
     def _(self, classified_page: LabeledFeaturedPage, label: Label) -> List[AnnotatedParagraph]:
         label_paragraphs = self.__extract_paragraphs_by_label(classified_page, label)
@@ -151,7 +150,6 @@ class TextAssembler:
             annotations = unused_annotations
 
         return annotated_paragraphs
-            
 
     @singledispatchmethod
     def __extract_paragraphs_by_label(self, classified_book: Any, label: Label) -> List[str]:
@@ -198,7 +196,6 @@ class TextAssembler:
         else:
             return ""
 
-    
     @staticmethod
     def __preprocess_classified_page(classified_page: LabeledFeaturedPage) -> LabeledFeaturedPage:
         preprocessed_blocks: List[LabeledFeaturedBlock] = []
