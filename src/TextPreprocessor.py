@@ -44,6 +44,9 @@ class FeaturedBlock:
 
         return list(paragraphs.values())
     
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def __str__(self) -> str:
         paragraphs_text = self.text
         return (

@@ -18,6 +18,9 @@ class Annotation:
 
     def __str__(self):
         return self.text
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 class AnnotatedParagraph:
@@ -27,6 +30,9 @@ class AnnotatedParagraph:
 
     def __str__(self):
         return self.text + '\n' + '\n'.join([str(annotation) for annotation in self.annotations])
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 class Chapter:
@@ -42,6 +48,9 @@ class Chapter:
 
     def __str__(self):
         return self.title + '\n' + str(self.epigraph) + '\n' + '\n'.join([str(paragraph) for paragraph in self.paragraphs])
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 
@@ -52,6 +61,9 @@ class Book:
 
     def __str__(self):
         return self.title + '\n' + '\n'.join([str(chapter) for chapter in self.chapters])
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 class TextAssembler:
@@ -212,7 +224,7 @@ class TextAssembler:
     
     @staticmethod
     def __join_annotated_paragraphs(paragraphs: List[AnnotatedParagraph], join_with = '\n') -> AnnotatedParagraph:
-        texts: List[str] = [paragraph.text for paragraph in paragraphs]
+        texts: List[str] = []
         annotations: List[str] = []
         for paragraph in paragraphs:
             texts.append(paragraph.text)

@@ -34,6 +34,9 @@ class TrainingLabeledFeaturedBlock(FeaturedBlock):
         base_str = super().__str__()
         return f'{base_str}\nLabel: {self.label}'
     
+    def __repr__(self):
+        return self.__str__()
+    
     def to_dict(self):
         return {
             "lines_count": self.lines_count,

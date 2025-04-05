@@ -18,6 +18,9 @@ class LabeledFeaturedBlock(FeaturedBlock):
         base_str = super().__str__()
         return f'{base_str}\nLabel: {self.label}'
     
+    def __repr__(self) -> str:
+      return self.__str__()
+    
 
 class LabeledFeaturedPage(List[LabeledFeaturedBlock]):
     def __init__(self, featured_page: FeaturedPage = [], labels = []):
@@ -33,7 +36,6 @@ class LabeledFeaturedPage(List[LabeledFeaturedBlock]):
 class LabeledFeaturedBook(List[LabeledFeaturedPage]):
     def __init__(self, pages: List[LabeledFeaturedPage] = []):
         super().__init__(pages)
-
 
 
 class TextClassifierModelConfig(PretrainedConfig):

@@ -67,6 +67,9 @@ class FeaturedWord():
             f"Bounding Box - Left: {self.left_position}, Top: {self.top_position}, Width: {self.box_width}, Height: {self.box_height}\n"
             f"Confidence Score: {self.confidence_score}"
         )
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 class TextExtractor(ABC):
